@@ -49,6 +49,10 @@ html, body {
     background: var(--paper);
 }
 
+.bg-section ul{
+    background: var(--bg);
+}
+
 .bg-section h1 {
     font-size: 4.375rem;
     font-family: opensans-heavy;
@@ -58,6 +62,34 @@ html, body {
     font-size: 2.5rem;
     font-family: opensans-heavy;
     color: var(--bg);
+}
+
+.toolbanner-section {
+    position: relative;
+    background: url('assets/images/toolsbanner.webp') no-repeat center center;
+    background-size: cover; /* ensures full coverage */
+    border-radius: 1rem; /* keeps your rounded corners */
+    overflow: hidden; /* ensures overlay respects rounded edges */
+}
+
+.toolbanner-section h1 {
+    font-size: 4.375rem;
+    font-family: opensans-heavy;
+}
+
+/* Overlay effect */
+.toolbanner-section::before {
+    content: "";
+    position: absolute;
+    inset: 0; /* covers entire section */
+    background: rgba(0, 0, 0, 0.4); /* semi-transparent overlay */
+    z-index: 1;
+}
+
+/* Ensure content sits above overlay */
+.toolbanner-section > * {
+    position: relative;
+    z-index: 2;
 }
 
 a, .btn-link {
@@ -71,7 +103,7 @@ a, .btn-link {
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+  //box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 .content {
@@ -246,4 +278,26 @@ h1:focus {
     list-style: disc inside;
     margin: 0.5rem 0 1rem;
     padding-left: 1rem;
+}
+
+.exebtn {
+    border: 0.4px solid transparent;
+    transition: transform 0.3s ease;
+}
+
+.exebtn:hover {
+    border: 0.4px solid #353b48;
+    background-color: #f7f1e3 !important;
+    transform: scale(0.95);
+}
+
+.nav-tabs .nav-link {
+    color: white;
+    border-radius: 0.5rem;
+}
+
+.nav-tabs .nav-link.active {
+    color: black !important; 
+    background-color: #fff;
+    border-radius: 0.5rem;
 }

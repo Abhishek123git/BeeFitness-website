@@ -6,7 +6,7 @@
 
 <PageTitle>Tools</PageTitle>
 
-<section class="bg-section rounded-3 w-100 h-auto gap-4">
+<section class="toolbanner-section text-white rounded-3 w-100 h-50 gap-4">
     <div class="p-4 text-center">
         <h1>Tools &amp; Calculators</h1>
     </div>
@@ -17,8 +17,8 @@
 
 <section class="bg-section rounded-3 w-100 h-auto my-3 p-2">
     <!-- Nav tabs -->
-    <ul class="nav nav-tabs justify-content-center bg-info rounded-3 p-2" role="tablist">
-        <li class="nav-item" role="presentation">
+    <ul class="nav nav-tabs justify-content-center fw-bold rounded-3 p-2" role="tablist">
+        <li class="nav-item m-2 " role="presentation">
             <button class="nav-link @(ActiveTabClass(ToolsTab.Calculator))"
                     id="calculatortab" type="button" role="tab"
                     aria-controls="tab1" aria-selected="@(TabStatus.ActiveTab == ToolsTab.Calculator)"
@@ -26,7 +26,7 @@
                 Calculator
             </button>
         </li>
-        <li class="nav-item" role="presentation">
+        <li class="nav-item m-2" role="presentation">
             <button class="nav-link @(ActiveTabClass(ToolsTab.Standards))"
                     id="standardstab" type="button" role="tab"
                     aria-controls="tab2" aria-selected="@(TabStatus.ActiveTab == ToolsTab.Standards)"
@@ -34,7 +34,7 @@
                 Standards
             </button>
         </li>
-        <li class="nav-item" role="presentation">
+        <li class="nav-item m-2" role="presentation">
             <button class="nav-link @(ActiveTabClass(ToolsTab.Workouts))"
                     id="workoutstab" type="button" role="tab"
                     aria-controls="tab3" aria-selected="@(TabStatus.ActiveTab == ToolsTab.Workouts)"

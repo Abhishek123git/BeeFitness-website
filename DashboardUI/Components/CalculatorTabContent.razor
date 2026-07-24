@@ -125,6 +125,11 @@
     </button>
 </div>
 
+@if (componentType != null)
+{
+    <DynamicComponent Type="componentType" />
+}
+
 @code {
     private Type? componentType;
 
@@ -134,10 +139,9 @@
         {
             var active = await JSRuntime.InvokeAsync<bool>("isTabActive", "#standardstab");
             TabState.SetStandardsActive(active);
-            componentType = TabState.IsStandardsActive ? null : typeof(StrengthCalculator);
 
-            // Decide which component to load
-            componentType = type switch
+            // Only assign if Standards tab is NOT active
+            componentType = active ? null : type switch
             {
                 "BMI" => typeof(BMICalculator),
                 "Strength" => typeof(StrengthCalculator),

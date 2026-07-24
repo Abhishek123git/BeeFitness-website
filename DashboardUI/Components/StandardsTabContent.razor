@@ -73,7 +73,7 @@
             @foreach (var ex in Exercises)
             {
                 <div class="col-3">
-                    <button class="w-100 d-flex text-center rounded-2 p-3 bg-light">
+                    <button class="exebtn w-100 d-flex justify-content-center align-items-center fw-bold text-center rounded-2 p-3 bg-light">
                         <img src="/assets/images/@ex.Image"
                              class="img-fluid me-2"
                              alt="@ex.Name" />
@@ -102,13 +102,17 @@
         new Exercise { Name = "Barbell Curl",    Image = "barbellcurl.webp" },
         new Exercise { Name = "Dumbbell Curl",   Image = "dumbbellcurl.webp" },
         new Exercise { Name = "Push Ups",        Image = "pushups.webp" },
-        new Exercise { Name = "Leg Press",       Image = "legpress.webp" }
+        new Exercise { Name = "Leg Press",       Image = "legpress.webp" },
+        new Exercise { Name = "Dips",            Image = "dips.webp" },
+        new Exercise { Name = "Lateral Raises",Image = "lateralraises.webp" },
+        new Exercise { Name = "Lat Pulldown",    Image = "latpulldown.webp" },
+        new Exercise { Name = "Leg Extension",   Image = "legextension.webp" }
     };
 
 
     private List<string> Categories { get; set; } = new()
     {
-        "Strength", "Cardio", "Flexibility", "Balance", "Rehabilitation"
+        "Barbell", "Bodyweight", "Dumbbell", "Machine", "Cable"
     };
 
     private string SearchText { get; set; } = string.Empty;
