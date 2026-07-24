@@ -1,0 +1,140 @@
+﻿@using System
+
+<section>
+    <p class="fs-1 fw-bold my-2">Weightlifting Strength Standards</p>
+    <p>
+        Our strength standards help you understand how your performance compares with other lifters. 
+        Choose an exercise to see where your one-rep max ranks among lifters of your gender, bodyweight and age.        
+    </p>
+</section>
+
+<section>
+    <p class="fs-4 fw-bold">By Exercise</p>
+
+    <div class="p-3 bg-light rounded">
+
+        @* Search box *@
+        <div class="mb-3">
+            <div class="input-group">
+                <span class="input-group-text bg-white border-end-0">
+                    <i class="bi bi-search text-secondary"></i>
+                </span>
+                <input type="text"
+                       class="form-control border-start-0"
+                       placeholder="Search..."
+                       @bind="SearchText"
+                       @bind:event="oninput"
+                       @onkeyup="OnSearchChanged" />
+            </div>
+        </div>
+
+        @* Filter dropdowns *@
+        <div class="d-flex gap-2 flex-wrap">
+
+            <div class="dropdown">
+                <button class="btn btn-sm btn-white border dropdown-toggle bg-white"
+                        type="button"
+                        id="bodyPartDropdown"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                    @(string.IsNullOrEmpty(SelectedBodyPart) ? "Any Body Part" : SelectedBodyPart)
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="bodyPartDropdown">
+                    <li><button class="dropdown-item" @onclick='() => SelectBodyPart("")'>Any Body Part</button></li>
+                    @foreach (var part in Exercises)
+                    {
+                        <li><button class="dropdown-item" @onclick="() => SelectBodyPart(part.Name)">@part.Name</button></li>
+                    }
+                </ul>
+            </div>
+
+            <div class="dropdown">
+                <button class="btn btn-sm btn-white border dropdown-toggle bg-white"
+                        type="button"
+                        id="categoryDropdown"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                    @(string.IsNullOrEmpty(SelectedCategory) ? "Any Category" : SelectedCategory)
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="categoryDropdown">
+                    <li><button class="dropdown-item" @onclick='() => SelectCategory("")'>Any Category</button></li>
+                    @foreach (var cat in Categories)
+                    {
+                        <li><button class="dropdown-item" @onclick="() => SelectCategory(cat)">@cat</button></li>
+                    }
+                </ul>
+            </div>
+        </div>        
+    </div>
+
+    @* Exercise *@
+    <div class="container p-3">
+        <div class="row g-2">
+            @foreach (var ex in Exercises)
+            {
+                <div class="col-3">
+                    <button class="w-100 d-flex text-center rounded-2 p-3 bg-light">
+                        <img src="/assets/images/@ex.Image"
+                             class="img-fluid me-2"
+                             alt="@ex.Name" />
+                        @ex.Name
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+
+</section>
+
+@code {
+    [Parameter] public EventCallback<string> OnSearchTextChanged { get; set; }
+    [Parameter] public EventCallback<string> OnBodyPartChanged { get; set; }
+    [Parameter] public EventCallback<string> OnCategoryChanged { get; set; }
+
+    // Replace with your real data source (injected service, parameter, etc.)
+    private List<Exercise> Exercises { get; set; } = new()
+    {
+        new Exercise { Name = "Bench Press",     Image = "benchpress.webp" },
+        new Exercise { Name = "Squat",           Image = "squat.webp" },
+        new Exercise { Name = "Shoulder Press",  Image = "shoulderpress.webp" },
+        new Exercise { Name = "Deadlift",        Image = "deadlift.webp" },
+        new Exercise { Name = "Pull Ups",        Image = "pullups.webp" },
+        new Exercise { Name = "Barbell Curl",    Image = "barbellcurl.webp" },
+        new Exercise { Name = "Dumbbell Curl",   Image = "dumbbellcurl.webp" },
+        new Exercise { Name = "Push Ups",        Image = "pushups.webp" },
+        new Exercise { Name = "Leg Press",       Image = "legpress.webp" }
+    };
+
+
+    private List<string> Categories { get; set; } = new()
+    {
+        "Strength", "Cardio", "Flexibility", "Balance", "Rehabilitation"
+    };
+
+    private string SearchText { get; set; } = string.Empty;
+    private string SelectedBodyPart { get; set; } = string.Empty;
+    private string SelectedCategory { get; set; } = string.Empty;
+
+    private async Task OnSearchChanged(KeyboardEventArgs e)
+    {
+        await OnSearchTextChanged.InvokeAsync(SearchText);
+    }
+
+    private async Task SelectBodyPart(string part)
+    {
+        SelectedBodyPart = part;
+        await OnBodyPartChanged.InvokeAsync(part);
+    }
+
+    private async Task SelectCategory(string cat)
+    {
+        SelectedCategory = cat;
+        await OnCategoryChanged.InvokeAsync(cat);
+    }
+
+    public class Exercise
+    {
+        public string? Name { get; set; }
+        public string? Image { get; set; }
+    }
+}

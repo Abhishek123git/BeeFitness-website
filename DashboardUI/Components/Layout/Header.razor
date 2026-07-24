@@ -1,0 +1,26 @@
+﻿<div class="header px-4">
+    <div class="btn-group dropdown">
+        <button type="button" class="btn">
+            <span>
+                <svg width="31" height="31" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="60" cy="60" r="58" fill="#F0F0F0" stroke="#9E9E9E" stroke-width="2" />
+                    <circle cx="60" cy="48" r="20" fill="#9E9E9E" />
+                    <path d="M60 74c-22 0-38 14-38 34a58 58 0 0076 0c0-20-16-34-38-34z" fill="#9E9E9E" />
+                </svg>
+                SignIn/LogIn
+            </span>
+        </button>
+        <button type="button" class="btn dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+            <span class="visually-hidden">Toggle Dropdown</span>
+        </button>
+        <ul class="dropdown-menu">
+            <NavLink class="dropdown-item" href="/viewprofile">View profile</NavLink>
+            <NavLink class="dropdown-item" href="#">Create Account/Login</NavLink>
+            <NavLink class="dropdown-item" href="/dashboard">Dashboard</NavLink>
+        </ul>
+    </div>
+</div>
+
+@code {
+
+}

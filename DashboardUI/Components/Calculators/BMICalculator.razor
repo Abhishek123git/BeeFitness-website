@@ -1,0 +1,244 @@
+﻿@rendermode InteractiveServer
+
+<div class="row g-0 d-flex flex-row card border border-2 rounded-3 overflow-hidden p-4">
+    <p class="fs-4 fw-bold">BMI Calculator</p>        
+    <div class="bmi-banner d-flex align-items-center gap-2 text-white rounded-1 px-3 py-2 my-2">
+        <span class="chevron bg-white rounded-circle d-inline-flex align-items-center justify-content-center fs-6">&#9660;</span>
+        <span>Modify the values and click the Calculate button to use</span>
+    </div>
+
+    <div class="row g-0 d-flex flex-row overflow-hidden">
+        <div class="col-lg-6 bg-white p-4 p-md-5">
+            <EditForm Model="@model" OnValidSubmit="Calculate">
+
+                <div class="input-group mb-3">
+                    <label id="lblage" class="input-group-text"><i class="bi bi-calendar-week me-2"></i>Age</label>
+                    <input type="number" min="2" max="120" placeholder="Enter your age" class="form-control rounded-end" aria-describedby="lblage" @bind="model.Age" />
+                    <div class="d-flex justify-content-center align-items-center">
+                        <small class="form-text text-muted ms-1">ages: 2 - 120</small>
+                    </div>
+                </div>              
+                
+                <div class="input-group mb-3">
+                    <label id="lblgender" class="input-group-text"><i class="bi bi-gender-ambiguous me-2"></i>Gender</label>
+                    <div class="d-flex align-items-center ps-3">
+                        <div class="form-check me-4">
+                            <input class="form-check-input" type="radio" name="gender" @bind="model.Gender" />
+                            <label class="form-check-label">Male</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="gender" @bind="model.Gender" />
+                            <label class="form-check-label">Female</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-group mb-3">
+                    <label id="lblheight" class="input-group-text"><i class="bi bi-rulers me-2"></i>Height</label>
+                    <input type="number" min="0" placeholder="Enter your height" class="form-control w-50" @bind="model.HeightValue" />
+                    <select class="form-select" @bind="model.BodyHeightUnit">
+                        <option value="" disabled selected hidden>-- Select unit --</option>
+                        <option value="cm">cm</option>
+                        <option value="m">m</option>
+                        <option value="ft">ft</option>
+                        <option value="in">in</option>
+                    </select>                    
+                </div>
+
+                <div class="input-group mb-3">
+                    <label id="lblweight" class="input-group-text"><i class="bi bi-arrows-expand-vertical me-2"></i>Weight</label>
+                    <input type="number" min="0" placeholder="Enter your weight" class="form-control w-50" @bind="model.WeightValue" />
+                    <select class="form-select" @bind="model.BodyweightUnit">
+                        <option value="" disabled selected hidden>-- Select unit --</option>
+                        <option value="kg">kg</option>
+                        <option value="lb">lb</option>
+                        <option value="st">st</option>
+                    </select>                    
+                </div>
+
+                <div class="d-flex justify-content-center gap-2 mt-3">
+                    <button type="submit" class="btn btn-success px-4">
+                        Calculate <i class="bi bi-send"></i>
+                    </button>
+                    <button type="reset" class="btn btn-secondary" @onclick="Clear">
+                        Clear <i class="bi bi-x-circle"></i>
+                    </button>
+                </div>
+            </EditForm>
+
+        </div>
+
+        <div class="col-lg-6 bg-white p-4 p-md-5 d-flex flex-column">
+            <div class="result-header">
+                <span>Result</span>                
+            </div>
+
+            @if (HasResult)
+            {
+                <div class="p-3">
+                    <p class="fs-5 fw-bold mb-2">
+                        BMI = @Bmi.ToString("0.0") kg/m<sup>2</sup>
+                        <span class="ms-1 fw-bold @CategoryCssClass">(@CategoryLabel)</span>
+                    </p>                    
+                    <ul class="mt-3 ps-4">
+                        <li class="mb-2">Healthy BMI range: 18.5 kg/m<sup>2</sup> - 25 kg/m<sup>2</sup></li>
+                        <li class="mb-2">Healthy weight for the height: @HealthyWeightMin.ToString("0.0") kg - @HealthyWeightMax.ToString("0.0") kg</li>
+                        <li class="mb-2">BMI Prime: @BmiPrime.ToString("0.0")</li>
+                        <li class="mb-2">Ponderal Index: @PonderalIndex.ToString("0.0") kg/m<sup>3</sup></li>
+                    </ul>
+                </div>
+            }
+            else
+            {
+                <div class="result-body-empty">
+                    <p>Enter your details and click Calculate to see your results.</p>
+                </div>
+            }
+        </div>
+    </div>
+
+    <p class="mt-4 lh-base text-dark">
+        The Body Mass Index (BMI) Calculator can be used to calculate BMI value and corresponding weight
+        status while taking age into consideration. Use the "Metric Units" tab for the International System
+        of Units or the "Other Units" tab to convert units into either US or metric units. Note that the
+        calculator also computes the Ponderal Index in addition to BMI, both of which are discussed below in detail.        
+    </p>
+
+    <h4 class="fw-bold">What is BMI?</h4>
+    <p>
+        BMI (Body Mass Index) is a quick way to check if your weight is healthy for your height. It's calculated using just two numbers — your height and weight — and gives you a score you can compare against standard ranges.
+
+        <h6 class="fw-bold mt-2">What the number means</h6>
+        <ul class="ps-3 lh-base">
+            <li><b>Underweight →</b> BMI below 18.5</li>
+            <li><b>Normal weight →</b> BMI between 18.5 and 24.9</li>
+            <li><b>Overweight →</b> BMI between 25 and 29.9</li>
+            <li><b>Obese →</b> BMI 30 or higher</li>
+        </ul>
+
+        Some calculators break these down further (like "severely underweight" or "very severely obese") for more detail. Keep in mind that healthy BMI ranges can vary slightly depending on age and region.<br /><br />
+        BMI isn't a perfect measurement — it doesn't account for muscle mass, bone density, or body composition. But it's a fast, simple screening tool that can flag whether it's worth checking in with a doctor or doing further tests.<br /><br />
+        See the table below for the BMI ranges used in this calculator.
+
+        <div class="w-100 h-auto p-2 d-flex justify-content-center align-content-center">
+            <img class="img-fluid" width="500" height="300" src="assets/images/BmiCategories.webp" alt="BMI ranges" />
+        </div>
+    </p>
+
+    <h4 class="fw-bold">BMI chart for adults</h4>
+    <p>
+        This chart shows the World Health Organization's BMI categories. Each color represents a different range — find where your height and weight meet on the original chart to see which zone you fall into.
+        <div class="w-100 h-auto p-2 d-flex justify-content-center align-content-center">
+            <img class="img-fluid" width="500" height="300" src="assets/images/bmi-chart.webp" alt="BMI ranges" />
+        </div>
+        This gives you the same six categories as your original chart — underweight, normal weight, overweight, and three levels of obesity — just laid out as simple ranges instead of a height/weight grid. 
+        It's easier to scan at a glance, though your original contour chart is more precise if someone wants to plot their exact height and weight.
+    </p>
+
+    <h4 class="fw-bold">BMI table for children and teens, age 2-20</h4>
+    <p>
+        The Centers for Disease Control and Prevention (CDC) recommends BMI categorization for children and teens between age 2 and 20.
+        <div class="w-100 h-auto p-2 d-flex justify-content-center align-content-center">
+            <img class="img-fluid" src="assets/images/bmi-chart-children.webp" alt="BMI ranges" />
+        </div>
+    </p>
+
+</div>
+
+@code{
+    private bool HasResult { get; set; } = true;
+    private double Bmi { get; set; }
+    private double BmiPrime { get; set; }
+    private double PonderalIndex { get; set; }
+    private double HealthyWeightMin { get; set; }
+    private double HealthyWeightMax { get; set; }
+    private string CategoryLabel { get; set; } = string.Empty;
+    private string CategoryCssClass { get; set; } = string.Empty;   
+    private string ErrorMessage { get; set; } = string.Empty;
+
+    private BmiModel model = new()
+    {
+        Gender = "",
+        Age = 0,
+        WeightValue = 0,
+        BodyweightUnit = "kg",
+        HeightValue = 0,
+        BodyHeightUnit = "cm"
+    };
+
+    private void Calculate()
+    {
+        try
+        {
+            var heightMeters = model.HeightInMeters;
+            var weightKg = model.WeightInKg;
+
+            if (heightMeters <= 0 || weightKg <= 0)
+                throw new ArgumentException("Height and weight must be positive values.");
+
+            Bmi = weightKg / Math.Pow(heightMeters, 2);
+            BmiPrime = Bmi / 25.0;
+            PonderalIndex = weightKg / Math.Pow(heightMeters, 3);
+            HealthyWeightMin = 18.5 * Math.Pow(heightMeters, 2);
+            HealthyWeightMax = 25.0 * Math.Pow(heightMeters, 2);
+
+            (CategoryLabel, CategoryCssClass) = ClassifyBmi(Bmi);
+
+            HasResult = true;
+            ErrorMessage = string.Empty;
+        }
+        catch (Exception ex)
+        {
+            Clear();
+            ErrorMessage = $"Error: {ex.Message}";
+        }
+    }
+
+    private void Clear()
+    {
+        Bmi=0;
+        BmiPrime = 0;
+        PonderalIndex = 0;
+        HealthyWeightMin = 0;
+        HealthyWeightMax = 0;
+        CategoryLabel = string.Empty;
+        CategoryCssClass = string.Empty;
+        HasResult = false;
+    }
+
+    private static (string label, string cssClass) ClassifyBmi(double bmi)
+    {
+        if (bmi < 18.5) return ("Underweight", "underweight");
+        if (bmi < 25) return ("Normal", "normal");
+        if (bmi < 30) return ("Overweight", "overweight");
+        return ("Obesity", "obesity");
+    }
+
+    public class BmiModel
+    {
+        public string Gender { get; set; } = string.Empty;
+        public int Age { get; set; }
+        public string BodyHeightUnit { get; set; } = "cm";
+        public double HeightValue { get; set; }
+        public double WeightValue { get; set; }
+        public string BodyweightUnit { get; set; } = "kg";
+
+        public double HeightInMeters =>
+            BodyHeightUnit.ToLower() switch
+            {
+                "cm" => HeightValue / 100.0,
+                "m" => HeightValue,
+                "ft" => HeightValue * 0.3048,
+                _ => throw new ArgumentException($"Unsupported height unit: {BodyHeightUnit}")
+            };
+
+        public double WeightInKg =>
+            BodyweightUnit.ToLower() switch
+            {
+                "kg" => WeightValue,
+                "lb" => WeightValue * 0.453592,
+                "st" => WeightValue * 6.35029318,
+                _ => throw new ArgumentException($"Unsupported weight unit: {BodyweightUnit}")
+            };
+    }
+}

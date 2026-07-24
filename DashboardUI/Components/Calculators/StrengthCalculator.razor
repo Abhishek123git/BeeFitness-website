@@ -1,0 +1,239 @@
+﻿@inject TabStatus TabState
+@inject IJSRuntime JSRuntime
+<div class="min-vh-100 py-4">
+    <div class="container">
+        <div class="row g-0 d-flex flex-row card border border-2 rounded-3 overflow-hidden">
+
+            <!-- LEFT PANEL: FORM -->
+            <div class="col-lg-6 bg-white p-4 p-md-5">
+                <p class="fs-4 fw-bold mb-4 lh-sm">
+                    Calculate your Relative Strength
+                </p>
+
+                <EditForm Model="@model" OnValidSubmit="CalculateStrength">
+
+                    <!-- Gender -->
+                    <div class="row mb-3 align-items-center">
+                        <label class="col-4 col-md-3 fw-semibold text-end pe-3">Gender <span class="text-danger fs-5" >*</span></label>
+                        <div class="col-8 col-md-9">
+                            <select class="form-select focus-ring-0 shadow-none" @bind="model.Gender">
+                                <option value="" >Select</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Age -->
+                    <div class="row mb-3 align-items-center">
+                        <label class="col-4 col-md-3 fw-semibold text-end pe-3">Age <span class="text-danger fs-5">*</span></label>
+                        <div class="col-8 col-md-9">
+                            <div class="input-group">
+                                <input type="number" class="form-control focus-ring-0 shadow-none" @bind="model.Age" />
+                                <span class="input-group-text bg-light text-muted">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="me-2"
+                                         fill="currentColor" viewBox="0 0 16 16">
+                                        <path d="M8 0a2 2 0 0 1 2 2c0 1.5-2 3-2 3S6 3.5 6 2a2 2 0 0 1 2-2z" fill="orange" />
+                                        <path d="M2 7h12v2H2V7zm0 3h12v6H2v-6z" fill="blue"  />
+                                    </svg>
+                                    years old
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bodyweight -->
+                    <div class="row mb-3 align-items-center">
+                        <label class="col-4 col-md-3 fw-semibold text-end pe-3">Bodyweight <span class="text-danger fs-5">*</span></label>
+                        <div class="col-8 col-md-9">
+                            <div class="input-group">
+                                <input type="number" class="form-control focus-ring-0 shadow-none" @bind="model.Bodyweight" />
+                                <select class="form-select flex-grow-0 focus-ring-0 shadow-none w-auto" @bind="model.BodyweightUnit">
+                                    <option value="kg">kg</option>
+                                    <option value="lb">lb</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Exercise -->
+                    <div class="row mb-2 align-items-center">
+                        <label class="col-4 col-md-3 fw-semibold text-end pe-3">Exercise <span class="text-danger fs-5">*</span></label>
+                        <div class="col-8 col-md-9">
+                            <select class="form-select focus-ring-0 shadow-none" @bind="model.Exercise">
+                                <option value="Squat">Squat</option>
+                                <option value="Bench Press">Bench Press</option>
+                                <option value="Deadlift">Deadlift</option>
+                                <option value="Overhead Press">Overhead Press</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Standards / How To buttons -->
+                    <div class="row mb-3">
+                        <div class="col-8 col-md-9 offset-4 offset-md-3">
+                            <button type="button" class="btn btn-light border btn-sm me-2">
+                                <i class="bi bi-grid-3x3-gap-fill me-1"></i> Standards
+                            </button>
+                            <button type="button" class="btn btn-light border btn-sm">
+                                <i class="bi bi-play-fill me-1"></i> How To
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Lift -->
+                    <div class="row mb-3 align-items-center">
+                        <label class="col-4 col-md-3 fw-semibold text-end pe-3">Lift <span class="text-danger fs-5">*</span></label>
+                        <div class="col-8 col-md-9">
+                            <div class="input-group">
+                                <input type="number" class="form-control focus-ring-0 shadow-none" @bind="model.Lift" />
+                                <select class="form-select flex-grow-0 w-auto focus-ring-0 shadow-none" @bind="model.LiftUnit">
+                                    <option value="kg">kg</option>
+                                    <option value="lb">lb</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Repetitions -->
+                    <div class="row mb-4 align-items-center">
+                        <label class="col-4 col-md-3 fw-semibold text-end pe-3">Repetitions <span class="text-danger fs-5">*</span></label>
+                        <div class="col-8 col-md-9">
+                            <input type="number" class="form-control focus-ring-0 shadow-none" @bind="model.Repetitions" />
+                        </div>
+                    </div>
+
+                    <!-- Submit -->
+                    <div class="row">
+                        <div class="col-8 col-md-9 offset-4 offset-md-3">
+                            <button type="submit" class="btn btn-primary btn-lg px-4 w-100 w-md-auto">
+                                Calculate Strength
+                            </button>
+                        </div>
+                    </div>
+                </EditForm>
+
+                @if (!string.IsNullOrEmpty(resultMessage))
+                {
+                    <div class="alert alert-success mt-4 mb-0">@resultMessage</div>
+                }
+            </div>
+
+            <!-- RIGHT PANEL: INFO -->
+            <div class="col-lg-6 bg-light p-4 p-md-5 d-flex flex-column text-justify">
+                <p class="fs-4 lh-sm fw-bold mb-3 text-justify">
+                    Strength Level calculates your performance in compound exercises like bench press, deadlift and squat.
+                </p>
+
+                <p class="text-dark fs-6 mb-3 text-justify fst-italic">
+                    <span class="fs-4 fw-bold text-danger">E</span>nter your <b>one‑rep max</b> and see exactly where you rank among lifters at your bodyweight. From <b>Beginner to Elite</b>, you’ll get a clear strength level that shows how far you’ve come — and how far you can go.<br /><br />
+                    Not sure of your one‑rep max? Adjust the <b>repetition count</b> and log your toughest set taken to failure. We’ll calculate your estimated max so you can still track your progress with precision.<br /><br />
+                    Compare your scores across <b>different bodyweights and genders</b>, challenge heavier or lighter friends, and celebrate every milestone. This isn’t just about numbers — it’s about building confidence, setting goals, and unlocking your next level of performance.<br /><br />
+                    <i class="bi bi-arrow-left me-1 text-info"></i> Start now!
+                </p>
+            </div>
+        </div>
+        <div class="border border-2 rounded-3 overflow-hidden my-2 bg-white p-4 p-md-5">
+            <p class="fs-4 fw-bold mb-4">Strength Standards</p>
+            <p class="text-justify">
+                Our strength standards are based on over multiple lifts entered by Strength Level users.<br /><br />
+                We have male and female standards for these gym exercises and more: bench press, squat, deadlift, shoulder press, pull ups, dumbbell bench press, dumbbell curl, push ups, barbell curl, dumbbell shoulder press.
+            </p>
+
+            <button class="btn btn-primary px-4 w-auto h-auto" @onclick="ActivateStandardsTab">
+                View Strength Standards
+            </button>
+        </div>
+        <div class="border border-2 rounded-3 overflow-hidden my-2 bg-white p-4 p-md-5">
+            <p class="fs-4 fw-bold mb-4">Fitness Standards</p>
+            <p class="text-justify">We have fitness calculators and cardio standards for running, rowing and cycling. How fit are you?</p>
+
+            <div class="row g-2">
+                <div class="col-2">
+                    <button class="btn btn-warning w-100 h-100 px-2 text-uppercase d-flex align-items-center fw-bold text-black">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M13.5 5.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3ZM9.147 3.048a.5.5 0 0 1 .577.41l.475 2.766.51-.408a.5.5 0 0 1 .207-.096l3-.6a.5.5 0 0 1 .196.98l-2.853.57-1.837 1.47.472 1.897 3.68.982a.5.5 0 0 1-.258.966l-3.984-1.062-.665-2.663-1.19 2.379.94 3.155a.5.5 0 1 1-.958.286l-1.04-3.483.334-4.001-.638 1.913a.5.5 0 0 1-.276.291l-2.5 1a.5.5 0 0 1-.372-.928l2.226-.89 2.147-6.44a.5.5 0 0 1 .807-.202l1.987 1.987a.5.5 0 0 1 .12.207l.334 1.164.735-4.29a.5.5 0 0 1 .407-.404Z" />
+                        </svg>
+                        <span class="ms-2">Running Level</span>
+                    </button>
+                </div>
+                <div class="col-2">
+                    <button class="btn btn-success w-100 h-100 px-2 text-uppercase d-flex align-items-center fw-bold text-black">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M13 2.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z" />
+                            <path fill-rule="evenodd" d="M11.28 4.53a.5.5 0 0 0-.66-.06L8.2 6.2a.5.5 0 0 0-.17.24l-.7 2.1-1.9 1.14a.5.5 0 0 0 .5.86l2-1.2a.5.5 0 0 0 .22-.26l.6-1.8 1.02 1.02-1.9 3.3a.5.5 0 0 0 .17.68l2.5 1.5a.5.5 0 1 0 .52-.86l-2.14-1.28 1.83-3.18 1.4 1.4a.5.5 0 0 0 .7-.7l-2-2a.5.5 0 0 0-.05-.05L11.5 5.2a.5.5 0 0 0-.22-.67Z" />
+                            <path d="M1 12.5a.5.5 0 0 1 .5-.5c1 0 1.5.5 2 .5s1-.5 2-.5 1.5.5 2 .5 1-.5 2-.5 1.5.5 2 .5 1-.5 2-.5 1.5.5 2 .5a.5.5 0 0 1 0 1c-1 0-1.5-.5-2-.5s-1 .5-2 .5-1.5-.5-2-.5-1 .5-2 .5-1.5-.5-2-.5-1 .5-2 .5-1.5-.5-2-.5-1 .5-2 .5a.5.5 0 0 1-.5-.5Z" />
+                        </svg>
+                        <span class="ms-2">Rowing Level</span>                        
+                    </button>
+                </div>
+                <div class="col-2">
+                    <button class="btn btn-info w-100 h-100 px-2 text-uppercase d-flex align-items-center fw-bold text-black">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="32" fill="currentColor" viewBox="0 0 16 16">
+                            <circle cx="13.5" cy="2.5" r="1.5" />
+                            <path d="M6.5 8.5c.5-1 1.5-2 3-2 1 0 1.5.5 2 1l1.5-1.5-1-1-1.5 1.5c-.7-.5-1.5-1-2.5-1-2 0-3.5 1.3-4.2 2.8L2.5 9 3 10l1.5-1.3c.3.6.9 1 1.6 1.1L4.5 12l1 .8L7.3 10c.4-.1.8-.4 1.1-.7l1.6 2.2 1-.7-2-2.8Z" />
+                            <path d="M.5 12.5c.5-.4 1-.4 1.5 0s1 .4 1.5 0 1-.4 1.5 0 1 .4 1.5 0 1-.4 1.5 0 1 .4 1.5 0 1-.4 1.5 0 1 .4 1.5 0a.5.5 0 1 1 .6.8c-.7.5-1.5.5-2.1 0-.6.5-1.4.5-2 0-.6.5-1.4.5-2 0-.6.5-1.4.5-2 0-.6.5-1.4.5-2 0-.6.5-1.4.5-2 0a.5.5 0 0 1-.6-.8Z" />
+                        </svg>
+                        <span>Swimming Level</span>                        
+                    </button>
+                </div>
+                <div class="col-2">
+                    <button class="btn btn-danger w-100 h-100 px-2 text-uppercase d-flex align-items-center fw-bold text-black">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 16 16">
+                            <circle cx="4" cy="11" r="2.5" />
+                            <circle cx="12" cy="11" r="2.5" />
+                            <path d="M4 11l3-5h3l3 5M7 6l-1.5-2H4M4 11h5" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        <span class="ms-2">Cycling Level</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@code {           
+    private async Task ActivateStandardsTab()
+    {
+        await JSRuntime.InvokeVoidAsync("activateTab", "#standardstab");
+        var active = await JSRuntime.InvokeAsync<bool>("isTabActive", "#standardstab");
+        TabState.SetStandardsActive(active);        
+    }
+
+    private StrengthModel model = new()
+    {
+        Gender = "",
+        Age = 27,
+        Bodyweight = 70,
+        BodyweightUnit = "kg",
+        Exercise = "Deadlift",
+        Lift = 120,
+        LiftUnit = "kg",
+        Repetitions = 3
+    };
+
+    private string resultMessage = string.Empty;
+
+    private void CalculateStrength()
+    {
+        // Placeholder calculation logic — replace with real strength-standard formula/lookup.
+        double estimatedOneRepMax = model.Lift * (1 + model.Repetitions / 30.0);
+
+        resultMessage = $"Estimated 1RM for {model.Exercise}: {estimatedOneRepMax:F1} {model.LiftUnit} " +
+                         $"(Bodyweight: {model.Bodyweight}{model.BodyweightUnit}, Age: {model.Age}, Gender: {model.Gender})";
+    }
+
+    public class StrengthModel
+    {
+        public string Gender { get; set; } = string.Empty;
+        public int Age { get; set; }
+        public double Bodyweight { get; set; }
+        public string BodyweightUnit { get; set; } = string.Empty;
+        public string Exercise { get; set; } = string.Empty;
+        public double Lift { get; set; }
+        public string LiftUnit { get; set; } = string.Empty;
+        public int Repetitions { get; set; }
+    }
+}
+

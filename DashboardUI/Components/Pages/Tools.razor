@@ -1,0 +1,97 @@
+﻿@page "/tools"
+@using DashboardUI.Components.Calculators
+@inject ToolTabStatus TabStatus
+@rendermode InteractiveServer
+@implements IDisposable
+
+<PageTitle>Tools</PageTitle>
+
+<section class="bg-section rounded-3 w-100 h-auto gap-4">
+    <div class="p-4 text-center">
+        <h1>Tools &amp; Calculators</h1>
+    </div>
+    <div class="p-4 text-center fs-3">
+        <p>Track your progress and measure your strength with these fitness tools and calculators.</p>
+    </div>
+</section>
+
+<section class="bg-section rounded-3 w-100 h-auto my-3 p-2">
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs justify-content-center bg-info rounded-3 p-2" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link @(ActiveTabClass(ToolsTab.Calculator))"
+                    id="calculatortab" type="button" role="tab"
+                    aria-controls="tab1" aria-selected="@(TabStatus.ActiveTab == ToolsTab.Calculator)"
+                    @onclick="() => SelectTab(ToolsTab.Calculator)">
+                Calculator
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link @(ActiveTabClass(ToolsTab.Standards))"
+                    id="standardstab" type="button" role="tab"
+                    aria-controls="tab2" aria-selected="@(TabStatus.ActiveTab == ToolsTab.Standards)"
+                    @onclick="() => SelectTab(ToolsTab.Standards)">
+                Standards
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link @(ActiveTabClass(ToolsTab.Workouts))"
+                    id="workoutstab" type="button" role="tab"
+                    aria-controls="tab3" aria-selected="@(TabStatus.ActiveTab == ToolsTab.Workouts)"
+                    @onclick="() => SelectTab(ToolsTab.Workouts)">
+                Workouts
+            </button>
+        </li>
+    </ul>
+
+    <!-- Tab content -->
+    <div class="tab-content p-4 my-2">
+        <div class="tab-pane fade @(PaneVisibleClass(ToolsTab.Calculator))"
+             id="tab1" role="tabpanel" aria-labelledby="calculatortab">
+            @if (TabStatus.ActiveTab == ToolsTab.Calculator)
+            {
+                <CalculatorTabContent />
+            }
+        </div>
+        <div class="tab-pane fade @(PaneVisibleClass(ToolsTab.Standards))"
+             id="tab2" role="tabpanel" aria-labelledby="standardstab">
+            @if (TabStatus.ActiveTab == ToolsTab.Standards)
+            {
+                <StandardsTabContent />
+            }
+        </div>
+        <div class="tab-pane fade @(PaneVisibleClass(ToolsTab.Workouts))"
+             id="tab3" role="tabpanel" aria-labelledby="workoutstab">
+            @if (TabStatus.ActiveTab == ToolsTab.Workouts)
+            {
+                <WorkoutsTabContent />
+            }
+        </div>
+    </div>
+</section>
+
+@code {
+    
+    private string ActiveTabClass(ToolsTab tab) =>
+        TabStatus.ActiveTab == tab ? "active" : string.Empty;
+
+    private string PaneVisibleClass(ToolsTab tab) =>
+        TabStatus.ActiveTab == tab ? "show active" : string.Empty;
+
+    private void SelectTab(ToolsTab tab) => TabStatus.SetActiveTab(tab);
+
+    protected override void OnInitialized()
+    {
+        TabStatus.OnChange += HandleTabStateChanged;
+    }
+
+    private void HandleTabStateChanged()
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        TabStatus.OnChange -= HandleTabStateChanged;
+    }
+}

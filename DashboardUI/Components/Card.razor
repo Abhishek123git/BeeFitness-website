@@ -1,0 +1,27 @@
+﻿@* Card.razor - reusable card component *@
+@using DashboardUI.Models
+
+<div class="row d-flex flex-row justify-content-center align-content-center gap-1">
+    <div class="col-3 w-100 h-auto diet-card d-flex flex-column py-3">                       
+        @if (!string.IsNullOrEmpty(Plan?.DetailUrl) && !string.IsNullOrEmpty(Plan?.ImageUrl) && !string.IsNullOrEmpty(Plan?.Title))
+        {
+            <a class="diet-card-link mt-3 fw-semibold text-decoration-none" href="@Plan?.DetailUrl"><img class="card-image" src="@Plan?.ImageUrl" alt="@Plan?.Title" /></a>
+        }        
+        @if (!string.IsNullOrEmpty(Plan?.Title) && !string.IsNullOrEmpty(Plan?.Description) && !string.IsNullOrEmpty(Plan?.FormattedReads) && !string.IsNullOrEmpty(Plan.FormattedComments))
+        {
+            <h3 class="mt-3 fs-5 fw-bold text-dark">@Plan.Title</h3>
+            <p class="mt-2 text-secondary lh-base">@Plan.Description</p>
+            <div class="d-flex gap-2 mt-3">
+                <span class="badge rounded-pill bg-light text-dark px-3 py-1 small">@Plan.FormattedReads</span>
+                <span class="badge rounded-pill bg-light text-dark px-3 py-1 small">@Plan.FormattedComments</span>
+            </div>
+        }            
+    </div>
+</div>
+
+@code {
+    // The single diet plan this card renders.
+    // Marked required so callers must supply it when using <Card />.
+    [Parameter, EditorRequired]
+    public DietPlan? Plan { get; set; } = default!; 
+}

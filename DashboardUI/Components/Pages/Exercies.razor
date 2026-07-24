@@ -1,0 +1,85 @@
+﻿@page "/exercies"
+@inject NavigationManager Navigation
+
+<PageTitle>Exercies</PageTitle>
+
+
+<section class="bg-section rounded-3 w-100 h-auto">
+    <div class="d-flex flex-column align-items-center gap-4 py-3">
+        <h1 class="text-black fw-bold">Exercise Video Database</h1>
+        <p class="text-center text-black fw-medium">The largest and most comprehensive database of free video exercise guides! Learn how to perform exercises using correct technique.</p>        
+        <div class="container-fluid d-flex justify-content-center align-items-center w-100 h-auto mb-0">
+            <div class="d-flex flex-row row w-100 h-auto gap-2 justify-content-center align-items-center">
+                <p class="col-2 text-muted text-center py-3 px-5 mb-0 fs-6 fw-bold"><span class="d-block fs-5 fw-bold">1000+</span>Exercises</p>
+                <p class="col-2 text-muted text-center py-3 px-5 mb-0 fs-6 fw-bold"><span class="d-block fs-5 fw-bold">390</span>Video</p>
+                <p class="col-2 text-muted text-center py-3 px-5 mb-0 fs-6 fw-bold"><span class="d-block fs-4 fw-bold">100</span>Categories</p>
+            </div>
+        </div>
+    </div>        
+</section>
+
+<section class="bg-section rounded-3 w-100 h-auto my-3 py-3">
+    <div class="d-flex flex-column justify-content-center align-items-center gap-4 py-3 w-100 h-auto">
+        <h2 class="text-uppercase fw-bolder">Excercises by Muscle Group</h2>
+        <p class="w-75 h-auto text-center text-black fw-medium">Choose the muscle group you want to target. Once in the muscle group, use the sort and filter options to find the best exercises for the equipment you have, your training experience, and goals.</p>
+    </div>
+    <div class="container-fluid d-flex justify-content-center align-items-center w-100 h-auto mb-0">
+        <div class="d-flex flex-row row w-100 h-auto gap-2 justify-content-center align-items-center">
+            <a class="col-3 d-block justify-content-center align-items-center text-center w-25 h-100 fw-bold text-decoration-none" href="#">
+                <img src="/assets/images/abs.webp" class="img-fluid"  />
+                Abs
+            </a>
+            <a class="col-3 d-block justify-content-center align-items-center text-center w-25 h-100 fw-bold text-decoration-none" href="#">
+                <img src="assets/images/biceps.webp" class="img-fluid" />
+                Biceps
+            </a>
+            <a class="col-3 d-block justify-content-center align-items-center text-center w-25 h-100 fw-bold text-decoration-none" href="#">
+                <img src="assets/images/forearms.webp" class="img-fluid" />
+                Forearms
+            </a>
+            <a class="col-3 d-block justify-content-center align-items-center text-center w-25 h-100 fw-bold text-decoration-none" href="#">
+                <img src="assets/images/calves.webp" class="img-fluid" />
+                Calves
+            </a>
+            <a class="col-3 d-block justify-content-center align-items-center text-center w-25 h-100 fw-bold text-decoration-none" href="#">
+                <img src="assets/images/chest.webp" class="img-fluid" />
+                Chest
+            </a>
+        </div>
+    </div>
+</section>
+
+<section class="bg-section rounded-3 w-100 h-auto my-3 py-3">
+    <div class="d-flex flex-column justify-content-center align-items-center gap-4 py-3 w-100 h-auto">
+        <h3 class="text-uppercase fw-bolder">Most Popular Exercises</h3>
+        <p class="w-75 h-auto text-center text-black fw-medium">These exercises are the most used by our visitors. Workout creators frequently choose these exercises in their workout plans because they are effective for their goal.</p>
+    </div>
+    <div class="container-fluid d-flex justify-content-center align-items-center w-100 h-auto mb-0">
+        <div class="d-flex flex-row row w-100 h-auto gap-2 justify-content-center align-items-center">
+            <a class="col-3 d-block justify-content-center align-items-center text-center w-25 h-100 fw-bold text-decoration-none" href="#">
+                <img src="/assets/images/abs.webp" class="img-fluid" />
+                Abs
+            </a>
+            <a class="col-3 d-block justify-content-center align-items-center text-center w-25 h-100 fw-bold text-decoration-none" href="#">
+                <img src="assets/images/biceps.webp" class="img-fluid" />
+                Biceps
+            </a>
+            <a class="col-3 d-block justify-content-center align-items-center text-center w-25 h-100 fw-bold text-decoration-none" href="#">
+                <img src="assets/images/forearms.webp" class="img-fluid" />
+                Forearms
+            </a>
+            <a class="col-3 d-block justify-content-center align-items-center text-center w-25 h-100 fw-bold text-decoration-none" href="#">
+                <img src="assets/images/calves.webp" class="img-fluid" />
+                Calves
+            </a>
+            <a class="col-3 d-block justify-content-center align-items-center text-center w-25 h-100 fw-bold text-decoration-none" href="#">
+                <img src="assets/images/chest.webp" class="img-fluid" />
+                Chest
+            </a>
+        </div>
+    </div>
+</section>
+
+@code {
+
+}

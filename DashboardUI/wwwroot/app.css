@@ -1,0 +1,249 @@
+:root {
+    --ink: #101820;
+    --ink-soft: #3a4750;
+    --paper: #EAEFE7;
+    --card: #FFFFFF;
+    --bg: #5352ed;
+    --line: #D7DDD1;
+    --volt: #D4FF3F;
+    --volt-ink: #3B4A00;
+    --cone: #FF5A36;
+    --cone-soft: #FFE7DF;
+    --muted: #7C867A;
+    --chalk: #101820;   
+}
+
+html, body {
+    height:100%;
+    margin:0;
+    padding: 0.3rem;    
+    overflow: hidden; /* prevents scrolling */
+}
+
+/* tick divider — signature element */
+.tick-divider {
+    height: 20px;
+    margin: 30px 2px 30px;
+    background-image: repeating-linear-gradient(to right, var(--line) 0, var(--line) 1px, transparent 1px, transparent 12px);
+}
+
+.tick-divider span {
+    padding-right: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.font-plexmono {
+    font-family: 'IBM Plex Mono', monospace !important;
+}
+
+.rounded-3 {
+    border-radius: 1.3rem !important;
+}
+
+.bg-section {
+    font-family: 'Work Sans', sans-serif !important;
+    background: var(--paper);
+}
+
+.bg-section h1 {
+    font-size: 4.375rem;
+    font-family: opensans-heavy;
+}
+
+.bg-section h2, h3 {
+    font-size: 2.5rem;
+    font-family: opensans-heavy;
+    color: var(--bg);
+}
+
+a, .btn-link {
+    color: #006bb7;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+.content {
+    padding-top: 1.1rem;
+}
+
+h1:focus {
+    outline: none;
+}
+
+.valid.modified:not([type=checkbox]) {
+    outline: 1px solid #26b050;
+}
+
+.invalid {
+    outline: 1px solid #e50000;
+}
+
+.validation-message {
+    color: #e50000;
+}
+
+.blazor-error-boundary {
+    background: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTYiIGhlaWdodD0iNDkiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIG92ZXJmbG93PSJoaWRkZW4iPjxkZWZzPjxjbGlwUGF0aCBpZD0iY2xpcDAiPjxyZWN0IHg9IjIzNSIgeT0iNTEiIHdpZHRoPSI1NiIgaGVpZ2h0PSI0OSIvPjwvY2xpcFBhdGg+PC9kZWZzPjxnIGNsaXAtcGF0aD0idXJsKCNjbGlwMCkiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yMzUgLTUxKSI+PHBhdGggZD0iTTI2My41MDYgNTFDMjY0LjcxNyA1MSAyNjUuODEzIDUxLjQ4MzcgMjY2LjYwNiA1Mi4yNjU4TDI2Ny4wNTIgNTIuNzk4NyAyNjcuNTM5IDUzLjYyODMgMjkwLjE4NSA5Mi4xODMxIDI5MC41NDUgOTIuNzk1IDI5MC42NTYgOTIuOTk2QzI5MC44NzcgOTMuNTEzIDI5MSA5NC4wODE1IDI5MSA5NC42NzgyIDI5MSA5Ny4wNjUxIDI4OS4wMzggOTkgMjg2LjYxNyA5OUwyNDAuMzgzIDk5QzIzNy45NjMgOTkgMjM2IDk3LjA2NTEgMjM2IDk0LjY3ODIgMjM2IDk0LjM3OTkgMjM2LjAzMSA5NC4wODg2IDIzNi4wODkgOTMuODA3MkwyMzYuMzM4IDkzLjAxNjIgMjM2Ljg1OCA5Mi4xMzE0IDI1OS40NzMgNTMuNjI5NCAyNTkuOTYxIDUyLjc5ODUgMjYwLjQwNyA1Mi4yNjU4QzI2MS4yIDUxLjQ4MzcgMjYyLjI5NiA1MSAyNjMuNTA2IDUxWk0yNjMuNTg2IDY2LjAxODNDMjYwLjczNyA2Ni4wMTgzIDI1OS4zMTMgNjcuMTI0NSAyNTkuMzEzIDY5LjMzNyAyNTkuMzEzIDY5LjYxMDIgMjU5LjMzMiA2OS44NjA4IDI1OS4zNzEgNzAuMDg4N0wyNjEuNzk1IDg0LjAxNjEgMjY1LjM4IDg0LjAxNjEgMjY3LjgyMSA2OS43NDc1QzI2Ny44NiA2OS43MzA5IDI2Ny44NzkgNjkuNTg3NyAyNjcuODc5IDY5LjMxNzkgMjY3Ljg3OSA2Ny4xMTgyIDI2Ni40NDggNjYuMDE4MyAyNjMuNTg2IDY2LjAxODNaTTI2My41NzYgODYuMDU0N0MyNjEuMDQ5IDg2LjA1NDcgMjU5Ljc4NiA4Ny4zMDA1IDI1OS43ODYgODkuNzkyMSAyNTkuNzg2IDkyLjI4MzcgMjYxLjA0OSA5My41Mjk1IDI2My41NzYgOTMuNTI5NSAyNjYuMTE2IDkzLjUyOTUgMjY3LjM4NyA5Mi4yODM3IDI2Ny4zODcgODkuNzkyMSAyNjcuMzg3IDg3LjMwMDUgMjY2LjExNiA4Ni4wNTQ3IDI2My41NzYgODYuMDU0N1oiIGZpbGw9IiNGRkU1MDAiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvZz48L3N2Zz4=) no-repeat 1rem/1.8rem, #b32121;
+    padding: 1rem 1rem 1rem 3.7rem;
+    color: white;
+}
+
+    .blazor-error-boundary::after {
+        content: "An error has occurred."
+    }
+
+.darker-border-checkbox.form-check-input {
+    border-color: #929292;
+}
+/*Cards*/
+
+/* Card.razor.css - scoped styles for Card.razor */
+
+.diet-card {  
+    max-width: 380px;
+}
+
+.diet-card-link {    
+    color: #2b6cb0;        
+}
+
+.diet-card-link:hover {
+    text-decoration: underline;
+}
+
+.card-image {
+    width: 100%;   
+    height: 200px;
+    object-fit: cover;
+    border-radius: 0.5rem; /* matches Bootstrap rounded */
+}
+
+.diet-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 32px;
+    margin-top: 24px;
+}
+
+/*BMI/ BMR Calculator*/
+
+.bmi-banner, .bmr-banner {
+    background: var(--bg);    
+}
+
+.chevron {    
+    color: #3f6a99;    
+    width: 22px;
+    height: 22px;        
+}
+
+.btn {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 3px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-calculate {
+    background: #4c7a2f;
+    color: #fff;
+    flex: 1;
+}
+
+.btn-clear {
+    background: #b5b5b5;    
+}
+
+.bmi-result {
+    flex: 1 1 420px;
+    min-width: 320px;
+    border: 1px solid #ddd;
+}
+
+.result-header {
+    background: #518428;
+    color: #fff;
+    padding: 10px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+}
+
+.result-body-empty {
+    color: #777;
+}
+
+.underweight {
+    color: #c0392b;
+}
+
+.normal {
+    color: #27ae60;
+}
+
+.overweight {
+    color: #d4a017;
+}
+
+.obesity {
+    color: #922b21;
+}
+
+.calorie-table th {
+    background-color: #2f5c8a;       
+}
+
+.calorie-table tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.details-table th {
+    background-color: #2f5c8a;
+}
+
+.details-table tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.protein {
+    font-family: system-ui, sans-serif;
+    line-height: 1.6;    
+    margin: 2rem auto;
+    padding: 1.5rem;    
+}
+
+.protein ul {
+    list-style: disc inside;
+    margin: 0.5rem 0 1rem;
+    padding-left: 1rem;
+}
+
+.protein li {
+    margin-bottom: 0.5rem;
+}
+
+.food-lists {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.food-lists ul {
+    list-style: disc inside;
+    margin: 0.5rem 0 1rem;
+    padding-left: 1rem;
+}

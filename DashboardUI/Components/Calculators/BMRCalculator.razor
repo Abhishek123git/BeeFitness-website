@@ -1,0 +1,424 @@
+﻿@rendermode InteractiveServer
+
+<div class="row g-0 d-flex flex-row card border border-2 rounded-3 overflow-hidden p-4">
+    <p class="fs-4 fw-bold">BMR Calculator</p>
+    The Basal Metabolic Rate (BMR) Calculator estimates your basal metabolic rate—the amount of energy expended while at rest in a neutrally temperate environment, 
+    and in a post-absorptive state (meaning that the digestive system is inactive, which requires about 12 hours of fasting).
+    <div class="bmr-banner d-flex align-items-center gap-2 text-white rounded-1 px-3 py-2 my-2">
+        <span class="chevron bg-white rounded-circle d-inline-flex align-items-center justify-content-center fs-6">&#9660;</span>
+        <span>Modify the values and click the Calculate button to use</span>
+    </div>
+
+    <div class="row g-0 d-flex flex-row overflow-hidden">
+        <div class="col-lg-6 bg-white p-4 p-md-5">
+            <EditForm Model="@model" OnValidSubmit="Calculate">
+
+                <div class="input-group mb-3">
+                    <label id="lblage" class="input-group-text"><i class="bi bi-calendar-week me-2"></i>Age</label>
+                    <InputNumber min="15" max="80" placeholder="Enter your age" class="form-control rounded-end" aria-describedby="lblage" @bind-Value="model.Age" />
+                    <div class="d-flex justify-content-center align-items-center">
+                        <small class="form-text text-muted ms-1">ages: 15 - 80</small>
+                    </div>
+                </div>
+
+                <div class="input-group mb-3">
+                    <label id="lblgender" class="input-group-text"><i class="bi bi-gender-ambiguous me-2"></i>Gender</label>
+                    <div class="d-flex align-items-center ps-3">
+                        <InputRadioGroup @bind-Value="model.Gender" Name="gender">
+                            <div class="form-check me-4">
+                                    <InputRadio id="genderMale" class="form-check-input" Value="@Gender.Male" />
+                                <label class="form-check-label">Male</label>
+                            </div>
+                            <div class="form-check">
+                                    <InputRadio id="genderFemale" class="form-check-input" Value="@Gender.Female" />
+                                <label class="form-check-label">Female</label>
+                            </div>
+                        </InputRadioGroup>
+                    </div>
+                </div>
+
+                <div class="input-group mb-3">
+                    <label id="lblheight" class="input-group-text"><i class="bi bi-rulers me-2"></i>Height</label>
+                    <InputNumber min="0" @bind-Value="model.HeightValue" placeholder="Enter your height" class="form-control w-50" />
+                    <InputSelect class="form-select" @bind-Value="model.BodyHeightUnit">
+                        <option value="" disabled selected hidden>-- Select unit --</option>
+                        <option value="cm">cm</option>
+                        <option value="m">m</option>
+                        <option value="ft">ft</option>                        
+                    </InputSelect>
+                </div>
+
+                <div class="input-group mb-3">
+                    <label id="lblweight" class="input-group-text"><i class="bi bi-arrows-expand-vertical me-2"></i>Weight</label>
+                    <InputNumber min="0" @bind-Value="model.WeightValue" placeholder="Enter your weight" class="form-control w-50" />
+                    <InputSelect class="form-select" @bind-Value="model.BodyweightUnit">
+                        <option value="" disabled selected hidden>-- Select unit --</option>
+                        <option value="kg">kg</option>
+                        <option value="lb">lb</option>
+                        <option value="st">st</option>
+                    </InputSelect>
+                </div>
+
+                <div id="divSettings" class="w-100 h-100 p-1 border rounded" hidden="@(!showSettings)">
+                    <div class="input-group mb-3">
+                        <label id="lblgender" class="input-group-text">Results unit</label>
+                        <div class="d-flex align-items-center ps-3">
+                            <InputRadioGroup @bind-Value="model.SelectedEnergyUnit" Name="EnergyUnit">
+                                <div class="form-check me-4">
+                                    <InputRadio class="form-check-input" id="EnergyCal" Value="@EnergyUnit.Calories" />
+                                    <label class="form-check-label">Calories</label>
+                                </div>
+                                <div class="form-check">
+                                    <InputRadio class="form-check-input" id="EnergyJol" Value="@EnergyUnit.Kilojoules" />
+                                    <label class="form-check-label">Kilojoules</label>
+                                </div>
+                            </InputRadioGroup>
+                        </div>
+                    </div>
+
+                    @if (model.SelectedBmrFormula == BmrFormula.KatchMcArdle)
+                    {
+                        <div id="InputFatSection" class="input-group mb-3">
+                            <label id="lblfat" class="input-group-text"><i class="bi bi-percent me-2"></i> Fat Percent</label>
+                            <InputNumber placeholder="Enter your Fat Percent Age" class="form-control rounded-end" aria-describedby="lblfat" @bind-Value="model.BodyFatPercent" />
+                        </div>
+                    }                    
+
+                    <div class="input-group mb-3">
+                        <label id="lblgender" class="input-group-text">BMR estimation formula</label>
+                        <div class="d-block align-items-center ps-3">
+                            <InputRadioGroup @bind-Value="model.SelectedBmrFormula" Name="BmrFormula">
+                                <div class="form-check me-4">
+                                    <InputRadio class="form-check-input" id="EnergyCal" Value="@BmrFormula.MifflinStJeor" />
+                                    <label class="form-check-label">Mifflin-St Jeor</label>
+                                </div>
+                                <div class="form-check">
+                                    <InputRadio class="form-check-input" id="EnergyJol" Value="@BmrFormula.RevisedHarrisBenedict" />
+                                    <label class="form-check-label">Revised Harris-Benedict</label>
+                                </div>
+                                <div class="form-check">
+                                    <InputRadio class="form-check-input" id="EnergyJol" Value="@BmrFormula.KatchMcArdle" />
+                                    <label class="form-check-label">Katch-McArdle</label>
+                                </div>
+                            </InputRadioGroup>
+                        </div>
+                    </div>
+                </div>                
+
+                <div class="d-flex justify-content-center gap-2 mt-3">
+                    <button type="submit" class="btn btn-success px-4">
+                        Calculate <i class="bi bi-send"></i>
+                    </button>
+                    <button type="reset" class="btn btn-secondary" @onclick="Clear">
+                        Clear <i class="bi bi-x-circle"></i>
+                    </button>
+                    <button type="reset" class="btn btn-secondary" @onclick="ToggleSettings">
+                        Settings <i class="bi bi-gear"></i>
+                    </button>
+                </div>
+            </EditForm>
+
+        </div>
+
+        <div class="col-lg-6 bg-white p-4 p-md-5 d-flex flex-column">
+            <div class="result-header">
+                <span>Result</span>
+            </div>
+
+            @if (HasResult)
+            {
+                <div class="p-3">
+                    <p class="fs-5 fw-bold mb-2"> BMR = @Bmr.ToString("0.0") @model.SelectedEnergyUnit/day </p>
+                    Daily calorie needs based on activity level
+                    
+                    <table class="calorie-table table table-bordered w-100">
+                        <thead>
+                            <tr class="text-white">
+                                <th class="text-start px-3 py-2">Activity Level</th>
+                                <th class="text-start px-3 py-2">Calorie</th>
+                            </tr>
+                        </thead>
+                        <tbody>        
+                            @foreach (var row in CalorieRows)
+                            {
+                                <tr>
+                                    <td class="text-start px-3 py-2">@row.Level</td>
+                                    <td class="text-start px-3 py-2">@row.Value.ToString("N0")</td>
+                                </tr>    
+                            }
+                        </tbody>
+                    </table>
+
+                    <small class="fst-italic">
+                        <strong>Exercise:</strong> 15-30 minutes of elevated heart rate activity.<br />
+                        <strong>Intense exercise:</strong> 45-120 minutes of elevated heart rate activity.<br />
+                        <strong>Very intense exercise:</strong> 2+ hours of elevated heart rate activity.
+                    </small>
+                </div>
+            }
+            else
+            {
+                <div class="result-body-empty">
+                    <p>Enter your details and click Calculate to see your results.</p>
+                </div>
+            }
+        </div>
+
+        <h6 class="fw-bold mt-2"><i class="bi bi-hexagon-fill text-info"></i> How much energy does it use?</h6>
+        <ul class="ps-3 lh-base">
+            <li><i class="bi bi-caret-right-fill"></i> Around <b>70%</b> of your daily calories go to this “upkeep.”</li>
+            <li><i class="bi bi-caret-right-fill"></i> About <b>20%</b> comes from physical activity.</li>
+            <li><i class="bi bi-caret-right-fill"></i> Roughly <b>10%</b> is used for digesting food (called <b>hermogenesis</b>).</li>
+        </ul>
+
+        <h6 class="fw-bold mt-2"><i class="bi bi-hexagon-fill text-info"></i>Why is it important?</h6>
+        <ul class="ps-3 lh-base">
+            <li><i class="bi bi-caret-right-fill"></i> BMR is usually the <b>largest part of your daily calorie needs.</b></li>
+            <li> <i class="bi bi-caret-right-fill"></i> To estimate total calories, multiply your BMR by an <b>activity factor</b> (1.2 for sedentary → up to 1.9 for very active).</li>
+        </ul>
+
+        <h6 class="fw-bold mt-2"><i class="bi bi-hexagon-fill text-info"></i>How is it calculated?</h6>
+        <p>There are different formulas:</p>
+        <ul class="ps-3 lh-base">
+            <li>
+                <i class="bi bi-caret-right-fill"></i> <b>Mifflin‑St Jeor Equation</b>→ most accurate for general use
+                <ol>
+                    <li>For men:  <b>BMR = 10W + 6.25H - 5A + 5</b></li>
+                    <li>For women:  <b>BMR = 10W + 6.25H - 5A - 161</b></li>
+                </ol>
+            </li> 
+            <li>
+                <b><i class="bi bi-caret-right-fill"></i> Revised Harris‑Benedict Equation</b>→ older, less precise
+                <ol>
+                    <li>For men:  <b>BMR = 13.397W + 4.799H - 5.677A + 88.362</b></li>
+                    <li>For women:  <b>BMR = 9.247W + 3.098H - 4.330A + 447.593</b></li>
+                </ol>
+            </li>             
+            <li>
+                <b><i class="bi bi-caret-right-fill"></i> Katch-McArdle Formula</b>→ best if you know your body fat %, since it uses lean body mass <b>BMR = 370 + 21.6(1 - F)W</b>
+            </li>             
+            <li>
+                Where,
+                <ol>
+                    <li>W is body weight in kg</li>
+                    <li>H is body height in cm</li>
+                    <li>A is age</li>
+                    <li>F is body fat in percentage</li>
+                </ol>
+            </li>             
+        </ul>
+
+        <h6 class="fw-bold mt-2"><i class="bi bi-hexagon-fill text-info"></i> BMR Variables</h6>
+        <ul class="ps-3 lh-base">
+            <li>
+                <b>Muscle Mass</b> - Aerobic exercises, such as running or cycling, have no effect on BMR. 
+                However, anaerobic exercises, such as weight-lifting, indirectly lead to a higher BMR because they build muscle mass, increasing resting energy consumption. 
+                The more muscle mass in the physical composition of an individual, the higher the BMR required to sustain their body at a certain level.
+            </li>
+            <li>
+                <b>Age</b> - The more elderly and limber an individual, the lower their BMR, or the lower the minimum caloric intake required to sustain the functioning of their organs at a certain level.
+            </li>
+            <li>
+                <b>Genetics</b> - Hereditary traits passed down from ancestors influence BMR.
+            </li>
+            <li>
+                <b>Weather</b> - Cold environments raise BMR because of the energy required to create a homeostatic body temperature. 
+                Likewise, too much external heat can raise BMR as the body expends energy to cool off internal organs. 
+                BMR increases approximately 7% for every increase of 1.36 degrees Fahrenheit in the body's internal temperature.
+            </li>
+            <li>
+                <b>Diet</b> - Small, routinely dispersed meals increase BMR. On the other hand, starvation can reduce BMR by as much as 30%. 
+                Similar to a phone that goes into power-saving mode during the last 5% of its battery, 
+                a human body will make sacrifices such as energy levels, moods, upkeep of bodily physique, 
+                and brain functions in order to more efficiently utilize what little caloric energy is being used to sustain it.
+            </li>
+            <li>
+                <b>Pregnancy</b> - Ensuring the livelihood of a separate fetus internally increases BMR. 
+                This is why pregnant women tend to eat more than usual. Also, menopause can increase or decrease BMR depending on hormonal changes.
+            </li>
+            <li>
+                <b>Supplements</b> - Certain supplements or drugs raise BMR, mostly to fuel weight loss. Caffeine is a common one.
+            </li>
+        </ul>
+
+        <h6 class="fw-bold mt-2"><i class="bi bi-hexagon-fill text-info"></i> BMR Tests</h6>
+        <p>
+            Online BMR tests with rigid formulas are not the most accurate method of determining an individual's BMR. 
+            It is better to consult a certified specialist or measure BMR through a calorimetry device. 
+            These handheld devices are available in many health and fitness clubs, doctor offices, and weight-loss clinics.
+        </p>
+
+        <h6 class="fw-bold mt-2"><i class="bi bi-hexagon-fill text-info"></i> Resting Metabolic Rate</h6>
+        <p>
+            While the two are used interchangeably, there is a key difference in their definitions. 
+            Resting metabolic rate, or RMR for short, is the rate at which the body burns energy in a relaxed, but not fully inactive state. 
+            It is also sometimes defined as resting energy expenditure, or REE. 
+            BMR measurements must meet total physiological equilibrium while RMR conditions of measurement can be altered and defined by contextual limitations.
+        </p>
+
+        <h6 class="fw-bold mt-2"><i class="bi bi-hexagon-fill text-info"></i> Modern Wisdom</h6>
+        <p>
+            A 2005 meta-analysis study on BMR* showed that when controlling all factors of metabolic rate, there is still a 26% unknown variance between people. 
+            Essentially, an average person eating an average diet will likely have expected BMR values, but there are factors that are still not understood that determines BMR precisely.<br /><br />
+            Therefore, all BMR calculations, even using the most precise methods through specialists, will not be perfectly accurate in their measurements. 
+            Not all human bodily functions are well understood just yet, so calculating total daily energy expenditure (TDEE) derived from BMR estimates are just that, estimates. 
+            When working towards any sort of health or fitness goal, BMR can aid in laying down the foundations, but from there on, it has little else to offer. A calculated BMR and thus TDEE may result in unsatisfactory results because of their rough estimates, but maintaining a daily journal of exercise, food consumption, etc., can help track the factors that lead to any given results and help determine what works, as well as what needs to be improved upon. 
+            Tracking progress in said journal and making adjustments over time as needed is generally the best indication of progress towards reaching personal goals.
+        </p>
+
+    </div>
+</div>
+
+@code {
+    private bool HasResult { get; set; } = true;
+    private double Bmr { get; set; }    
+    private string ErrorMessage { get; set; } = string.Empty;
+    private bool showSettings = false;
+
+    // ---- Enums instead of magic strings: compiler-checked, no typos, no ToLower() ----
+    public enum Gender { Male, Female }
+    public enum HeightUnit { cm, m, ft }
+    public enum WeightUnit { kg, lb, st }
+    public enum EnergyUnit { Calories, Kilojoules }
+    public enum BmrFormula { MifflinStJeor, RevisedHarrisBenedict, KatchMcArdle }
+
+    // ---- Conversion constants (no magic numbers scattered around) ----
+    private const double FtToM = 0.3048;
+    private const double LbToKg = 0.453592;
+    private const double StToKg = 6.35029318;
+    private const double CalorieToKilojoule = 4.184;
+
+    private record ActivityLevel(string Level, double Multiplier);
+    private static readonly List<ActivityLevel> ActivityLevels = new()
+    {
+        new("Sedentary: little or no exercise", 1.20),
+        new("Exercise 1-3 times/week", 1.375),
+        new("Exercise 4-5 times/week", 1.465),
+        new("Daily exercise or intense exercise 3-4 times/week", 1.55),
+        new("Intense exercise 6-7 times/week", 1.725),
+        new("Very intense exercise daily, or physical job", 1.90),
+    };
+
+    private BmiModel model = new()
+    {
+        SelectedBmrFormula = BmrFormula.MifflinStJeor
+    };
+
+    private IEnumerable<(string Level, double Value)> CalorieRows =>
+        ActivityLevels.Select(a =>
+        {
+            var calories = Bmr * a.Multiplier;
+            var value = model.SelectedEnergyUnit == EnergyUnit.Kilojoules
+                ? calories * CalorieToKilojoule
+                : calories;
+            return (a.Level, Math.Round(value));
+        }
+    );
+
+    private void Calculate()
+    {
+        try
+        {
+            if (!TryValidate(out var error))
+            {
+                Clear();
+                ErrorMessage = error;
+                return;
+            }
+
+            Bmr = CalculateBmr(model.SelectedBmrFormula, model.Gender, model.WeightInKg, model.HeightInMeters * 100, model.Age, model.BodyFatPercent);
+            HasResult = true;
+            ErrorMessage = string.Empty;
+        }
+        catch (Exception ex)
+        {
+            Clear();
+            ErrorMessage = $"Error: {ex.Message}";
+        }
+    }
+
+    // Pure function — easy to unit test, no side effects, no exceptions for normal flow
+    private static double CalculateBmr( BmrFormula formula, Gender gender, double weightKg, double heightCm, int age, double? bodyFatPercent = null )
+    {
+        return formula switch
+        {
+            BmrFormula.MifflinStJeor => CalculateMifflinStJeor(gender, weightKg, heightCm, age),
+            BmrFormula.RevisedHarrisBenedict => CalculateHarrisBenedict(gender, weightKg, heightCm, age),
+            BmrFormula.KatchMcArdle => CalculateKatchMcArdle(weightKg, bodyFatPercent),
+            _ => throw new ArgumentOutOfRangeException(nameof(formula))
+        };
+    }
+
+    private static double CalculateMifflinStJeor(Gender gender, double weightKg, double heightCm, int age) =>
+    gender switch
+    {
+        Gender.Male => (10 * weightKg) + (6.25 * heightCm) - (5 * age) + 5,
+        Gender.Female => (10 * weightKg) + (6.25 * heightCm) - (5 * age) - 161,
+        _ => throw new ArgumentOutOfRangeException(nameof(gender))
+    };
+
+    private static double CalculateHarrisBenedict(Gender gender, double weightKg, double heightCm, int age) =>
+        gender switch
+        {
+            Gender.Male => 88.362 + (13.397 * weightKg) + (4.799 * heightCm) - (5.677 * age),
+            Gender.Female => 447.593 + (9.247 * weightKg) + (3.098 * heightCm) - (4.330 * age),
+            _ => throw new ArgumentOutOfRangeException(nameof(gender))
+        };
+
+    private static double CalculateKatchMcArdle(double weightKg, double? bodyFatPercent)
+    {
+        if (bodyFatPercent is not double bf)
+            throw new ArgumentException("Katch-McArdle requires body fat percentage.");
+
+        var leanBodyMass = weightKg * (1 - bf / 100.0);
+        return 370 + (21.6 * leanBodyMass);
+    }
+
+    // Validate *before* calculating instead of relying on try/catch for expected bad input
+    private bool TryValidate(out string error)
+    {
+        if (model.Age <= 0) { error = "Age must be greater than 0."; return false; }
+        if (model.WeightValue <= 0) { error = "Weight must be greater than 0."; return false; }
+        if (model.HeightValue <= 0) { error = "Height must be greater than 0."; return false; }
+
+        error = string.Empty;
+        return true;
+    }
+
+    private void Clear()
+    {
+        Bmr = 0;               
+        HasResult = false;
+    }
+
+    private void ToggleSettings() => showSettings = !showSettings;
+
+    public class BmiModel
+    {
+        public Gender Gender { get; set; } = Gender.Male;
+        public int Age { get; set; }
+        public HeightUnit BodyHeightUnit { get; set; } = HeightUnit.cm;
+        public double HeightValue { get; set; }
+        public double WeightValue { get; set; }
+        public WeightUnit BodyweightUnit { get; set; } = WeightUnit.kg;
+        public EnergyUnit SelectedEnergyUnit { get; set; } = EnergyUnit.Calories;
+        public BmrFormula SelectedBmrFormula { get; set; } = BmrFormula.MifflinStJeor;
+        public double BodyFatPercent { get; set; } 
+
+        public double HeightInMeters => BodyHeightUnit switch
+        {
+            HeightUnit.cm => HeightValue / 100.0,
+            HeightUnit.m => HeightValue,
+            HeightUnit.ft => HeightValue * FtToM,
+            _ => throw new ArgumentOutOfRangeException(nameof(BodyHeightUnit))
+        };
+
+        public double WeightInKg => BodyweightUnit switch
+        {
+            WeightUnit.kg => WeightValue,
+            WeightUnit.lb => WeightValue * LbToKg,
+            WeightUnit.st => WeightValue * StToKg,
+            _ => throw new ArgumentOutOfRangeException(nameof(BodyweightUnit))
+        };
+    }
+}

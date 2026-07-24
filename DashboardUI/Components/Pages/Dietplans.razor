@@ -1,0 +1,213 @@
+@page "/dietplans"
+@using DashboardUI.Models
+
+<PageTitle>Diet Plan</PageTitle>
+
+<section class="d-flex flex-column align-items-center justify-content-center bg-section rounded-3 w-100 h-50 gap-2 p-3">
+    <div class="text-center p-3">
+        <h1 class="fw-bold">Diet Plans</h1>
+    </div>
+    <div class="text-center">
+        <p class="fs-6">
+            Learn about different approaches to fitness nutrition so you can choose
+            the best diet plan to suit your goals.
+        </p>
+    </div>
+</section>
+
+
+<section class="bg-section rounded-3 w-100 h-auto my-3 p-3">
+    <div class="container text-center">
+        <h2 class="text-uppercase fw-bold mb-2">Diet Guides</h2>
+        <p class="fs-6">
+            Confused about what diet you should follow? Our guides explain the different approaches
+            to nutrition in detail. Read these guides and choose a diet style that best suits your goals,
+            food preferences, and lifestyle.
+        </p>
+    </div>
+    <div class="diet-card-grid">
+        @foreach (var plan in dietPlans)
+        {
+            <Card Plan="plan" />
+        }
+    </div>
+</section>
+
+<section class="bg-section rounded-3 w-100 h-auto my-3 p-3">
+    <div class="container text-center">
+        <h2 class="text-uppercase fw-bold mb-2">Healthy Recipes</h2>
+        <p class="fs-6">Learn how to prepare meals that taste great and support your fitness goals.</p>
+    </div>
+    <div class="diet-card-grid">
+        @foreach (var recipe in recipePlans)
+        {
+            <RecipeCard Recipe="recipe" />
+        }
+    </div>
+</section>
+
+
+@code {
+    // In a real app this would come from a service/API call in OnInitializedAsync.
+    // Kept inline here so the mapping logic is easy to see end-to-end.
+    private List<DietPlan> dietPlans = new();
+    private List<RecipeCardModel> recipePlans = new();
+
+    protected override void OnInitialized()
+    {
+        dietPlans = GetDietPlans();
+        recipePlans = GetRecipePlans();
+    }
+
+    private List<DietPlan> GetDietPlans()
+    {
+        // This is the "mapping" step: raw data -> DietPlan model objects
+        // that the Card component knows how to render.
+        return new List<DietPlan>
+        {
+            new DietPlan
+            {
+                Id = 1,
+                Title = "The Clean Eating Diet Plan Guide",
+                Description = "Learn everything you need to know before starting the Clean Eating Diet plan including it's history, guidelines & components, & all of the science behind it.",
+                ImageUrl = "assets/images/clean-diet.webp",
+                Reads = 782000,
+                Comments = 48,
+                DetailUrl = "./dietplans/clean-eating"
+            },
+            new DietPlan
+            {
+                Id = 2,
+                Title = "The IIFYM & Flexible Dieting Diet Plan Guide",
+                Description = "Learn everything you need to know before starting the IIFYM Diet plan including it's history, guidelines and components, and all of the science behind it.",
+                ImageUrl = "assets/images/iifym.webp",
+                Reads = 279200,
+                Comments = 5,
+                DetailUrl = "/dietplans/iifym"
+            },
+            new DietPlan
+            {
+                Id = 3,
+                Title = "The Ketogenic & Low Carb Diet Plan Guide",
+                Description = "Learn everything you need to know before starting the Keto Diet plan including it's history, guidelines and components, and all of the science behind it.",
+                ImageUrl = "assets/images/keto-diet.webp",
+                Reads = 286000,
+                Comments = 5,
+                DetailUrl = "/dietplans/keto"
+            },
+            new DietPlan
+            {
+                Id = 4,
+                Title = "The Mediterranean Diet Plan Guide",
+                Description = "Learn everything you need to know before starting the Mediterranean Diet plan including it's history, guidelines and components, and all of the science behind it.",
+                ImageUrl = "assets/images/mediterranean-diet.webp",
+                Reads = 486080,
+                Comments = 5,
+                DetailUrl = "/dietplans/mediterranean"
+            },
+            new DietPlan
+            {
+                Id = 5,
+                Title = "The Vegan, Vegetarian, & Pescatarian Diet Plan Guide",
+                Description = "Learn everything you need to know before starting the Vegan, Vegetarian, & Pescatarian Diet plan including it's history, guidelines and components, and all of the science behind it.",
+                ImageUrl = "assets/images/vegan.webp",
+                Reads = 486080,
+                Comments = 5,
+                DetailUrl = "/dietplans/vegan-vegetarian-pescatarian"
+            },
+            new DietPlan
+            {
+                Id = 6,
+                Title = "The Carb Cycling Diet Plan Guide",
+                Description = "Learn everything you need to know before starting the Carb Cycling Diet plan including it's history, guidelines & components, & all the science behind it.",
+                ImageUrl = "assets/images/carb-cycling.webp",
+                Reads = 486080,
+                Comments = 5,
+                DetailUrl = "/dietplans/carb-cycling"
+            },
+            new DietPlan
+            {
+                Id = 7,
+                Title = "The Intermittent Fasting Diet Plan Guide",
+                Description = "Learn everything you need to know before starting the Intermittent Fasting plan including it's history, guidelines & components, & all the science behind it.",
+                ImageUrl = "assets/images/intermittent-fasting.webp",
+                Reads = 486080,
+                Comments = 5,
+                DetailUrl = "/dietplans/intermittent-fasting"
+            },
+            new DietPlan
+            {
+                Id = 8,
+                Title = "The Zone Diet Plan Guide",
+                Description = "Learn everything you need to know before starting the Zone Diet plan including it's history, guidelines and components, and all the science behind it.",
+                ImageUrl = "assets/images/zone-diet.webp",
+                Reads = 486080,
+                Comments = 5,
+                DetailUrl = "/dietplans/zone-diet"
+            }
+        };
+    }
+
+    private List<RecipeCardModel> GetRecipePlans()
+    {
+        return new List<RecipeCardModel>
+        {
+            new RecipeCardModel
+            {
+                Id = 1,                                
+                ImageUrl = "assets/images/proteinshakes.webp",
+                CardTitle = "Protein Shakes",
+                DetailUrl = "/recipes/protein-shakes"
+            },
+            new RecipeCardModel
+            {
+                Id = 2,
+                CardTitle = "Protein Bars",
+                ImageUrl = "assets/images/proteinbars.webp",
+                DetailUrl = "/recipes/protein-bars"
+            },
+            new RecipeCardModel
+            {
+                Id = 3,                               
+                CardTitle = "High Protein",
+                ImageUrl = "assets/images/highprotein.webp",
+                DetailUrl = "/recipes/high-protein"
+            },
+            new RecipeCardModel
+            {
+                Id = 4,
+                ImageUrl = "assets/images/lowcarb.webp",
+                CardTitle = "Low Carb",
+                DetailUrl = "/recipes/low-carbs"
+            },
+            new RecipeCardModel
+            {
+                Id = 5,
+                CardTitle = "Snacks",
+                ImageUrl = "assets/images/snacks.webp",
+                DetailUrl = "/recipes/snacks"
+            },
+            new RecipeCardModel
+            {
+                Id = 6,
+                CardTitle = "Dinner",
+                ImageUrl = "assets/images/dinner.webp",
+                DetailUrl = "/recipes/dinner"
+            },
+            new RecipeCardModel
+            {
+                Id = 7,
+                CardTitle = "BBQ/Grill",
+                ImageUrl = "assets/images/bbqgrill.webp",
+                DetailUrl = "/recipes/bbq-grill"
+            },
+            new RecipeCardModel
+            {
+                Id = 8,
+                CardTitle = "Vegetarian",
+                ImageUrl = "assets/images/vegetarian.webp",
+                DetailUrl = "/recipes/vegetarian"
+            }
+        };
+    }
+}

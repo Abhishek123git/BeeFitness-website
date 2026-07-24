@@ -1,0 +1,537 @@
+﻿@rendermode InteractiveServer
+
+<div class="row g-0 d-flex flex-row card border border-2 rounded-3 overflow-hidden p-4">
+    <p class="fs-4 fw-bold">Protein Calculator</p>
+    The Protein Calculator estimates the daily amount of dietary protein adults require to remain healthy. 
+    Children, those who are highly physically active, and pregnant and nursing women typically require more protein. 
+    The calculator is also useful for monitoring protein intake for those with kidney disease, liver disease, diabetes, or other conditions in which protein intake is a factor.
+    <div class="bmr-banner d-flex align-items-center gap-2 text-white rounded-1 px-3 py-2 my-2">
+        <span class="chevron bg-white rounded-circle d-inline-flex align-items-center justify-content-center fs-6">&#9660;</span>
+        <span>Modify the values and click the Calculate button to use</span>
+    </div>
+
+    <div class="row g-0 d-flex flex-row overflow-hidden">
+        <div class="col-lg-6 bg-white p-4 p-md-5">
+             <EditForm Model="@model" OnValidSubmit="Calculate">
+
+                <div class="input-group mb-3">
+                    <label id="lblage" class="input-group-text"><i class="bi bi-calendar-week me-2"></i>Age</label>
+                    <InputNumber min="15" max="80" placeholder="Enter your age" class="form-control rounded-end" aria-describedby="lblage" @bind-Value="model.Age" />
+                    <div class="d-flex justify-content-center align-items-center">
+                        <small class="form-text text-muted ms-1">ages: 18 - 80</small>
+                    </div>
+                </div>
+
+                <div class="input-group mb-3">
+                    <label id="lblgender" class="input-group-text"><i class="bi bi-gender-ambiguous me-2"></i>Gender</label>
+                    <div class="d-flex align-items-center ps-3">
+                        <InputRadioGroup @bind-Value="model.Gender" Name="gender">
+                            <div class="form-check me-4">
+                                <InputRadio id="genderMale" class="form-check-input" Value="@Gender.Male" />
+                                <label class="form-check-label">Male</label>
+                            </div>
+                            <div class="form-check">
+                                <InputRadio id="genderFemale" class="form-check-input" Value="@Gender.Female" />
+                                <label class="form-check-label">Female</label>
+                            </div>
+                        </InputRadioGroup>
+                    </div>
+                </div>
+
+                <div class="input-group mb-3">
+                    <label id="lblheight" class="input-group-text"><i class="bi bi-rulers me-2"></i>Height</label>
+                    <InputNumber min="0" @bind-Value="model.HeightValue" placeholder="Enter your height" class="form-control w-50" />
+                    <InputSelect class="form-select" @bind-Value="model.BodyHeightUnit">
+                        <option value="" disabled selected hidden>-- Select unit --</option>
+                        <option value="cm">cm</option>
+                        <option value="m">m</option>
+                        <option value="ft">ft</option>
+                    </InputSelect>
+                </div>
+
+                <div class="input-group mb-3">
+                    <label id="lblweight" class="input-group-text"><i class="bi bi-arrows-expand-vertical me-2"></i>Weight</label>
+                    <InputNumber min="0" @bind-Value="model.WeightValue" placeholder="Enter your weight" class="form-control w-50" />
+                    <InputSelect class="form-select" @bind-Value="model.BodyweightUnit">
+                        <option value="" disabled selected hidden>-- Select unit --</option>
+                        <option value="kg">kg</option>
+                        <option value="lb">lb</option>
+                        <option value="st">st</option>
+                    </InputSelect>
+                </div>
+
+                <div class="input-group mb-3">
+                    <label id="lblActivity" class="input-group-text"><i class="bi bi-activity me-2"></i> Activity</label>                    
+                    <InputSelect class="form-select" @bind-Value="model.ActivityFactor">
+                        <option value="" disabled selected hidden>-- Select unit --</option>
+                        <option value="1.2">Sedentary: little or no exercise</option>
+                        <option value="1.375">Light: exercise 1-3 times/week</option>
+                        <option value="1.55">Moderate: exercise 4-5 times/week</option>                        
+                        <option value="1.725">Very Active: intense exercise 6-7 times/week</option>
+                        <option value="1.9">Extra Active: very intense exercise daily, or physical job</option>
+                    </InputSelect>
+                </div>
+
+                <div id="divSettings" class="w-100 h-100 p-1 border rounded" hidden="@(!showSettings)">                    
+
+                    @if (model.SelectedBmrFormula == BmrFormula.KatchMcArdle)
+                    {
+                        <div id="InputFatSection" class="input-group mb-3">
+                            <label id="lblfat" class="input-group-text"><i class="bi bi-percent me-2"></i> Fat Percent</label>
+                            <InputNumber placeholder="Enter your Fat Percent Age" class="form-control rounded-end" aria-describedby="lblfat" @bind-Value="model.BodyFatPercent" />
+                        </div>
+                    }
+
+                    <div class="input-group mb-3">
+                        <label id="lblgender" class="input-group-text">BMR estimation formula</label>
+                        <div class="d-block align-items-center ps-3">
+                            <InputRadioGroup @bind-Value="model.SelectedBmrFormula" Name="BmrFormula">
+                                <div class="form-check me-4">
+                                    <InputRadio class="form-check-input" id="EnergyCal" Value="@BmrFormula.MifflinStJeor" />
+                                    <label class="form-check-label">Mifflin-St Jeor</label>
+                                </div>                                
+                                <div class="form-check">
+                                    <InputRadio class="form-check-input" id="EnergyJol" Value="@BmrFormula.KatchMcArdle" />
+                                    <label class="form-check-label">Katch-McArdle</label>
+                                </div>
+                            </InputRadioGroup>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-center gap-2 mt-3">
+                    <button type="submit" class="btn btn-success px-4">
+                        Calculate <i class="bi bi-send"></i>
+                    </button>
+                    <button type="reset" class="btn btn-secondary" @onclick="Clear">
+                        Clear <i class="bi bi-x-circle"></i>
+                    </button>
+                    <button type="reset" class="btn btn-secondary" @onclick="ToggleSettings">
+                        Settings <i class="bi bi-gear"></i>
+                    </button>
+                </div>
+            </EditForm>
+            <small class="fst-italic">
+                <strong>Exercise:</strong> 15-30 minutes of elevated heart rate activity.<br />
+                <strong>Intense exercise:</strong> 45-120 minutes of elevated heart rate activity.<br />
+                <strong>Very intense exercise:</strong> 2+ hours of elevated heart rate activity.
+            </small>
+
+        </div>
+
+        <div class="col-lg-6 bg-white p-4 p-md-5 d-flex flex-column">
+            <div class="result-header">
+                <span>Result</span>
+            </div>
+
+            @if (HasResult)
+            {
+                <div class="p-3">
+                    Based on given information, the following are the basic protein intake recommendations from multiple authoritative institutions:
+                    <p class="fst-italic">American Dietetic Association (ADA): <span class="fw-bold text-success">at least 60 - 108 grams/day.</span></p>
+                    <p class="fst-italic">The Centers for Disease Control and Prevention (CDC): <span class="fw-bold text-success">at least @LeastCdc - @MaxCdc grams/day.</span></p>
+                    <p class="fst-italic">World Health Organization safe lower limit: <span class="fw-bold text-success">50 grams/day.</span></p>
+                </div>
+            }
+            else
+            {
+                <div class="result-body-empty">
+                    <p>Enter your details and click Calculate to see your results.</p>
+                </div>
+            }
+        </div>
+
+        <section class="protein">
+            <h5 class="fw-bold mt-2"><i class="bi bi-hexagon-fill text-info"></i>What is Proteins?</h5>
+            <p>
+                Proteins are one of three primary macronutrients that provide energy to the human body, along with fats and carbohydrates.
+                They are essential for the structure, function, and regulation of tissues and organs.
+            </p>
+
+            <h6 class="fw-bold mt-2"><i class="bi bi-hexagon-fill text-primary"></i> Composition</h6>
+            <p>
+                Proteins are made up of 20 amino acids. Nine of these are <strong>essential amino acids</strong> that must be obtained from food.
+                Complete protein sources include meat, dairy, eggs, fish, soy, quinoa, and buckwheat.
+            </p>
+
+            <h6 class="fw-bold mt-2"><i class="bi bi-hexagon-fill text-primary"></i> Types of Proteins</h6>
+            <ul>
+                <li><strong>Antibodies:</strong> Protect the body from foreign particles like viruses and bacteria.</li>
+                <li><strong>Enzymes:</strong> Facilitate chemical reactions and help form new molecules.</li>
+                <li><strong>Messengers:</strong> Transmit signals to regulate body processes.</li>
+                <li><strong>Structural Components:</strong> Build cells and enable movement.</li>
+                <li><strong>Transport/Storage:</strong> Move and store molecules throughout the body.</li>
+            </ul>
+            
+            <p class="text-warning fw-bold mt-2 fst-italic">Note:
+                <span class="fw-normal">Adequate protein intake is vital for maintaining healthy levels and supporting the body’s many functions.</span>
+            </p>                  
+            
+            <h5 class="fw-bold mt-2"><i class="bi bi-hexagon-fill text-info"></i> Daily Protein Requirements</h5>
+            <p>
+                The amount of protein needed varies based on age, activity level, and overall energy intake.
+                A general guideline is <strong>0.8 g/kg of body weight</strong> as the minimum recommended dietary allowance (RDA).
+            </p>
+
+            <h6 class="fw-bold mt-2"><i class="bi bi-hexagon-fill text-primary"></i> Recommended Range</h6>
+            <ul>
+                <li><strong>0.8 – 1.8 g/kg:</strong> Typical range for most adults.</li>
+                <li><strong>1.8 – 2.0 g/kg:</strong> Suggested for highly active individuals or those building muscle.</li>
+                <li><strong>10–35% of total calories:</strong> Another way to estimate intake.</li>
+            </ul>
+
+            <p class="text-warning fw-bold mt-2 fst-italic">Note:            
+                <span class="fw-normal">Protein needs are not exact science. Consult a dietitian, doctor, or trainer to tailor intake to your individual goals.</span>
+            </p>        
+
+            <h5 class="fw-bold mt-2"><i class="bi bi-hexagon-fill text-info"></i>Foods High in Protein</h5>
+            <p>
+                Protein intake can be met through a variety of foods. While meat and dairy are common sources,
+                plant-based options can also provide sufficient protein when combined thoughtfully.
+            </p>
+
+            <h6 class="fw-bold mt-2"><i class="bi bi-hexagon-fill text-primary"></i> Complete Protein Sources</h6>
+            <div class="food-lists">
+                <div>                    
+                    <ul>
+                        <li>Eggs</li>
+                        <li>Chicken breast</li>
+                        <li>Cottage cheese</li>
+                        <li>Greek yogurt</li>
+                        <li>Milk</li>
+                        <li>Lean beef</li>
+                        <li>Tuna</li>
+                        <li>Turkey breast</li>
+                        <li>Fish</li>
+                        <li>Shrimp</li>
+                    </ul>
+                </div>
+                <div>                    
+                    <ul>
+                        <li>Buckwheat</li>
+                        <li>Hummus & pita</li>
+                        <li>Soy products (tofu, tempeh, edamame)</li>
+                        <li>Peanut butter on toast</li>
+                        <li>Beans & rice</li>
+                        <li>Quinoa</li>
+                        <li>Hemp & chia seeds</li>
+                        <li>Spirulina</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h6 class="fw-bold mt-2"><i class="bi bi-hexagon-fill text-primary"></i> High-Protein (Incomplete) Foods</h6>
+            <ul>
+                <li>Almonds</li>
+                <li>Oats</li>
+                <li>Broccoli</li>
+                <li>Lentils</li>
+                <li>Ezekiel bread</li>
+                <li>Chia seeds</li>
+                <li>Pumpkin seeds</li>
+                <li>Peanuts</li>
+                <li>Brussels sprouts</li>
+                <li>Grapefruit</li>
+                <li>Green peas</li>
+                <li>Avocados</li>
+                <li>Mushrooms</li>
+            </ul>
+            
+            <p class="text-warning fw-bold mt-2 fst-italic">Note:
+                <span class="fw-normal">Balance is key: combining different protein sources ensures all essential amino acids are met.</span>
+            </p>
+
+            <h6 class="fw-bold mt-2"><i class="bi bi-hexagon-fill text-primary"></i> How Much Protein Do You Need?</h6>
+            <p>
+                Protein needs vary from person to person, depending on factors like <b>body weight, activity level, age, and fitness goals</b>. While there's no single "correct" number, research gives us solid ranges to work from.<br /><br />
+
+                <b>The Baseline: RDA (0.8 g/kg)<br /></b>
+                The Recommended Dietary Allowance (RDA) for protein is <b>>0.8 grams per kilogram of body weight</b>. This is the minimum amount needed to prevent deficiency — not necessarily the optimal amount for health, performance, or muscle building.<br /><br />
+
+                <b>The Optimal Range: 0.8–1.8 g/kg<br /></b>
+                Most people benefit from consuming more than the bare minimum. A general range of <b>0.8 to 1.8 g/kg</b> covers most lifestyles, with intake scaling up based on:
+                <ul>
+                    <li><strong>Activity level -</strong> more exercise generally means more protein needed for recovery.</li>
+                    <li><strong>Muscle-building goals -</strong> those trying to gain muscle need more than sedentary individuals</li>
+                    <li><strong>Age -</strong> Transmit signals to regulate body processes.</li>
+                    <li><strong>Overall caloric intake -</strong> older adults often need more protein to counteract natural muscle loss</li>
+                    <li><strong>Transport/Storage:</strong> protein is also commonly expressed as 10–35% of total daily calories</li>
+                </ul>
+
+                <b>For Highly Active Individuals: 1.8–2.0 g/kg<br /></b>
+                People who train intensely or are focused on muscle growth often benefit from <b>1.8 to 2 g/kg</b> of body weight — near the top of typical recommendations.<br /><br />
+
+                <b>The Bottom Line<br /></b>
+                Protein needs aren't an exact science — they depend on your individual circumstances and goals.
+                For personalized guidance, it's best to consult a <b>dietitian, doctor, or certified trainer</b> who can factor in your specific body composition, activity level, and health goals.
+            </p>            
+
+            <h6 class="fw-bold mt-2"><i class="bi bi-hexagon-fill text-primary"></i> Recommended dietary allowance (RDA) of protein, based on age</h6>
+            <div class="d-flex justify-content-center align-content-center py-2">
+                <table class="details-table table table-bordered table-rounded w-50 h-auto">
+                    <thead>
+                        <tr class="text-white">
+                            <th class="text-start px-3 py-2">Age Range</th>
+                            <th class="text-start px-3 py-2">Protein Needed (grams/day)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var row in RDARows)
+                        {
+                            <tr>
+                                <td class="text-start px-3 py-2">@row.Level</td>
+                                <td class="text-start px-3 py-2">@row.Value.ToString()</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div> 
+            
+            <h6 class="fw-bold mt-2"><i class="bi bi-hexagon-fill text-primary"></i> Extra Protein Requirements for Pregnancy and Lactation</h6>
+            <div class="d-flex justify-content-center align-content-center py-2">
+                <table class="details-table table table-bordered table-rounded w-75 h-auto">
+                    <thead>
+                        <tr class="text-white">
+                            <th class="text-start px-3 py-2">Pregnancy Level</th>
+                            <th class="text-start px-3 py-2">Safe Intake (grams / day)</th>
+                            <th class="text-start px-3 py-2">Additional Energy Requirement (kj/day)</th>
+                            <th class="text-start px-3 py-2">Protein : Energy ratio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var row in RDARowsPregnancy)
+                        {
+                            <tr>
+                                <td class="text-start px-3 py-2">@row.Level</td>
+                                <td class="text-start px-3 py-2 text-center">@row.SafeIntake.ToString()</td>
+                                <td class="text-start px-3 py-2 text-center">@row.EnergyRequirement</td>
+                                <td class="text-start px-3 py-2 text-center">@row.RatioValue.ToString()</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <h6 class="fw-bold mt-2"><i class="bi bi-hexagon-fill text-primary"></i> Amount of protein in common food</h6>
+            <div class="d-flex justify-content-center align-content-center py-2">
+                <table class="details-table table table-bordered table-rounded w-50 h-auto">
+                    <thead>
+                        <tr class="text-white">
+                            <th class="text-start px-3 py-2">Common Foods</th>
+                            <th class="text-start px-3 py-2">Protein Amount</th>                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var row in CommonFoodRows)
+                        {
+                            <tr>
+                                <td class="text-start px-3 py-2">@row.Level</td>
+                                <td class="text-start px-3 py-2 text-center">@row.ProteinAmount</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </div>   
+</div>
+
+@code {
+    private bool HasResult { get; set; } = true;
+    private double Bmr { get; set; }
+    private double BmrAF { get; set; }
+    private int LeastCdc { get; set; }
+    private int MaxCdc { get; set; }
+    private string ErrorMessage { get; set; } = string.Empty;
+    private bool showSettings = false;
+
+    // ---- Enums instead of magic strings: compiler-checked, no typos, no ToLower() ----
+    public enum Gender { Male, Female }
+    public enum HeightUnit { cm, m, ft }
+    public enum WeightUnit { kg, lb, st }
+    public enum EnergyUnit { Calories, Kilojoules }
+    public enum BmrFormula { MifflinStJeor, KatchMcArdle }
+
+    // ---- Conversion constants (no magic numbers scattered around) ----
+    private const double FtToM = 0.3048;
+    private const double LbToKg = 0.453592;
+    private const double StToKg = 6.35029318;
+
+    // ---- CDC (Acceptable Macronutrient Distribution Range) constants ----
+    private const double CdcLowerPct = 0.10;
+    private const double CdcUpperPct = 0.35;
+    private const double CaloriesPerGram = 4.0;
+
+    public record AgeRange(string Level, int Value);
+    public record CommonFood(string Level, string ProteinAmount);
+    public record PregnancyLevel(string Level, int SafeIntake, string EnergyRequirement, double RatioValue);
+
+    private static readonly List<AgeRange> Ranges = new()
+    {
+        new("Age 1 - 3", 13),
+        new("Age 4 - 8", 19),
+        new("Age 9 - 13", 34),
+        new("Age 14 - 18 (Girls)", 46),
+        new("Age 14 - 18 (Boys)", 52),
+        new("Age 19 - 70+ (Women)", 46),
+        new("Age 19 - 70+ (Men)", 56)
+    };
+
+    private static readonly List<CommonFood> commonFoodData = new()
+    {
+        new("Milk (1 cup/8 oz)", "8g"),
+        new("Egg (1 large)/50g", "6g"),
+        new("Meat (1 slice / 2 oz)", "14g"),
+        new("Seafood (2 oz)", "16g"),
+        new("Bread (1 slice/64 g)", "8g"),
+        new("Corn (1 cup/166 g)", "16g"),
+        new("Rice (1 cup/195 g)", "5g"),
+        new("Dry Bean (1 cup/92 g)", "16g"),
+        new("Nuts (1 cup/92 g)", "20g"),
+        new("Fruits and Vegetables (1 cup)", "1g"),
+        new("Pizza (1 slice/107 g)", "12g"),
+        new("Hamburger (McDonald Medium)", "20g"),
+    };
+
+    private static readonly List<PregnancyLevel> data = new()
+    {
+        new("Pregnancy trimester 1", 1, "375", 0.04),
+        new("Pregnancy trimester 2", 10, "1,200", 0.11),
+        new("Pregnancy trimester 3", 31, "1,950", 0.23),
+        new("Lactation First 6 months", 19, "2,800", 0.11),
+        new("Lactation After 6 months", 13, "1,925", 0.11),
+    };
+    
+    private static readonly IReadOnlyList<(string Level, int Value)> RDARows =
+        Ranges.Select(r => (r.Level, r.Value)).ToArray();
+
+    private static readonly IReadOnlyList<(string Level, string ProteinAmount)> CommonFoodRows =
+        commonFoodData.Select(r => (r.Level, r.ProteinAmount)).ToArray();
+
+    private static readonly IReadOnlyList<(string Level, int SafeIntake, string EnergyRequirement, double RatioValue)> RDARowsPregnancy =
+        data.Select(r => (r.Level, r.SafeIntake, r.EnergyRequirement, r.RatioValue)).ToArray();
+
+    private BmiModel model = new()
+    {
+        SelectedBmrFormula = BmrFormula.MifflinStJeor
+    };
+
+    private void Calculate()
+    {
+        if (!TryValidate(out var error))
+        {
+            Clear();
+            ErrorMessage = error;
+            return;
+        }
+
+        try
+        {
+            Bmr = CalculateBmr(model.SelectedBmrFormula, model.Gender, model.WeightInKg, model.HeightInMeters * 100, model.Age, model.BodyFatPercent);
+
+            if (Bmr <= 0)
+            {
+                Clear();
+                ErrorMessage = "BMR calculation failed.";
+                return;
+            }
+
+            BmrAF = Bmr * model.ActivityFactor;
+            LeastCdc = (int)Math.Floor(BmrAF * CdcLowerPct / CaloriesPerGram);
+            MaxCdc = (int)Math.Floor(BmrAF * CdcUpperPct / CaloriesPerGram);
+
+            HasResult = true;
+            ErrorMessage = string.Empty;
+        }
+        catch (Exception ex)
+        {
+            Clear();
+            ErrorMessage = $"Error: {ex.Message}";
+        }
+    }
+
+    // Pure function — easy to unit test, no side effects, no exceptions for normal flow
+    private static double CalculateBmr(BmrFormula formula, Gender gender, double weightKg, double heightCm, int age, double? bodyFatPercent = null)
+    {
+        return formula switch
+        {
+            BmrFormula.MifflinStJeor => CalculateMifflinStJeor(gender, weightKg, heightCm, age),
+            BmrFormula.KatchMcArdle => CalculateKatchMcArdle(weightKg, bodyFatPercent!.Value),
+            _ => throw new ArgumentOutOfRangeException(nameof(formula))
+        };
+    }
+
+    private static double CalculateMifflinStJeor(Gender gender, double weightKg, double heightCm, int age) =>
+        gender switch
+        {
+            Gender.Male => (10 * weightKg) + (6.25 * heightCm) - (5 * age) + 5,
+            Gender.Female => (10 * weightKg) + (6.25 * heightCm) - (5 * age) - 161,
+            _ => throw new ArgumentOutOfRangeException(nameof(gender))
+        };
+
+    private static double CalculateKatchMcArdle(double weightKg, double bodyFatPercent)
+    {
+        var leanBodyMass = weightKg * (1 - bodyFatPercent / 100.0);
+        return 370 + (21.6 * leanBodyMass);
+    }
+    
+    private bool TryValidate(out string error)
+    {
+        if (model.Age <= 0) { error = "Age must be greater than 0."; return false; }
+        if (model.WeightValue <= 0) { error = "Weight must be greater than 0."; return false; }
+        if (model.HeightValue <= 0) { error = "Height must be greater than 0."; return false; }
+        if (model.ActivityFactor <= 0) { error = "Activity factor must be greater than 0."; return false; }
+
+        if (model.SelectedBmrFormula == BmrFormula.KatchMcArdle &&
+            (model.BodyFatPercent <= 0 || model.BodyFatPercent >= 100))
+        {
+            error = "Body fat percentage must be between 0 and 100 for the Katch-McArdle formula.";
+            return false;
+        }
+
+        error = string.Empty;
+        return true;
+    }
+
+    private void Clear()
+    {
+        Bmr = 0;
+        BmrAF = 0;
+        LeastCdc = 0;
+        MaxCdc = 0;
+        HasResult = false;
+    }
+
+    private void ToggleSettings() => showSettings = !showSettings;
+
+    public class BmiModel
+    {
+        public Gender Gender { get; set; } = Gender.Male;
+        public int Age { get; set; }
+        public HeightUnit BodyHeightUnit { get; set; } = HeightUnit.cm;
+        public double HeightValue { get; set; }
+        public double WeightValue { get; set; }
+        public WeightUnit BodyweightUnit { get; set; } = WeightUnit.kg;
+        public BmrFormula SelectedBmrFormula { get; set; } = BmrFormula.MifflinStJeor;
+        public double BodyFatPercent { get; set; }
+        public double ActivityFactor { get; set; }
+
+        public double HeightInMeters => BodyHeightUnit switch
+        {
+            HeightUnit.cm => HeightValue / 100.0,
+            HeightUnit.m => HeightValue,
+            HeightUnit.ft => HeightValue * FtToM,
+            _ => throw new ArgumentOutOfRangeException(nameof(BodyHeightUnit))
+        };
+
+        public double WeightInKg => BodyweightUnit switch
+        {
+            WeightUnit.kg => WeightValue,
+            WeightUnit.lb => WeightValue * LbToKg,
+            WeightUnit.st => WeightValue * StToKg,
+            _ => throw new ArgumentOutOfRangeException(nameof(BodyweightUnit))
+        };
+    }
+}
+

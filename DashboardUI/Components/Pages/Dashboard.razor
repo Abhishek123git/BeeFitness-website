@@ -1,0 +1,162 @@
+﻿@page "/dashboard"
+@using System.Globalization
+@inject IJSRuntime JS
+
+<PageTitle>Dashboard</PageTitle>
+
+<div class="dashboard-page">
+
+    <div class="dash-header">
+        <div>
+            <div class="eyebrow">@DateTime.Now.ToString("dddd, MMM d", CultureInfo.InvariantCulture)</div>
+            <h1>Welcome back, <span>Jordan</span></h1>
+        </div>
+        <div class="streak-pill">
+            <i class="ti ti-flame" aria-hidden="true"></i>
+            <span>@currentStreak day streak</span>
+        </div>
+    </div>
+
+    <div class="metric-rail">
+        @foreach (var metric in metrics)
+        {
+            <div class="metric-cell">
+                <div class="metric-label">@metric.Label</div>
+                <div class="metric-value">@metric.Value<span>@metric.Unit</span></div>
+                <div class="metric-delta @(metric.DeltaPositive ? "up" : "down")">
+                    <i class="ti @(metric.DeltaPositive ? "ti-arrow-up-right" : "ti-arrow-down-right")" aria-hidden="true"></i>
+                    @metric.Delta
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="tick-divider"><span>Performance</span></div>
+
+    <div class="chart-grid">
+        <div class="chart-card">
+            <div class="chart-card-header">
+                <h3>Workout mix</h3>
+                <span class="chart-sub">Last 30 days</span>
+            </div>
+            <div class="pie-wrap">
+                <canvas id="workoutMixChart"></canvas>
+                <div class="pie-center">
+                    <div class="pie-center-value">@totalSessions</div>
+                    <div class="pie-center-label">sessions</div>
+                </div>
+            </div>
+            <div class="legend">
+                @foreach (var slice in workoutMix)
+                {
+                    <div class="legend-item">
+                        <span class="legend-dot" style="background:@slice.Color"></span>
+                        @slice.Label
+                        <span class="legend-value">@slice.Value%</span>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <div class="chart-card-header">
+                <h3>Sessions this week</h3>
+                <span class="chart-sub">Mon &ndash; Sun</span>
+            </div>
+            <div class="bar-wrap">
+                <canvas id="weeklySessionsChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="tick-divider"><span>Progress</span></div>
+
+    <div class="chart-card chart-card-wide">
+        <div class="chart-card-header">
+            <h3>Body weight trend</h3>
+            <span class="chart-sub">Last 8 weeks</span>
+        </div>
+        <div class="line-wrap">
+            <canvas id="weightTrendChart"></canvas>
+        </div>
+    </div>
+
+    <div class="tick-divider"><span>Recent activity</span></div>
+
+    <div class="activity-table">
+        <div class="activity-row activity-head">
+            <span>Date</span>
+            <span>Type</span>
+            <span>Duration</span>
+            <span>Calories</span>
+        </div>
+        @foreach (var entry in recentActivity)
+        {
+            <div class="activity-row">
+                <span>@entry.Date</span>
+                <span><span class="type-tag" style="background:@entry.Color">@entry.Type</span></span>
+                <span>@entry.Duration</span>
+                <span>@entry.Calories kcal</span>
+            </div>
+        }
+    </div>
+
+</div>
+
+@code {
+    private int currentStreak = 12;
+    private int totalSessions = 42;
+
+    private record Metric(string Label, string Value, string Unit, string Delta, bool DeltaPositive);
+    private record MixSlice(string Label, int Value, string Color);
+    private record ActivityEntry(string Date, string Type, string Duration, int Calories, string Color);
+
+    private List<Metric> metrics = new()
+    {
+        new("Sessions", "18", "", "+3 vs last wk", true),
+        new("Calories burned", "9.2", "k", "+6%", true),
+        new("Avg heart rate", "142", "bpm", "-4 bpm", true),
+        new("Active minutes", "640", "min", "-8%", false)
+    };
+
+    private List<MixSlice> workoutMix = new()
+    {
+        new("Strength", 38, "#D4FF3F"),
+        new("Endurance", 27, "#FF5A36"),
+        new("Mobility", 20, "#2FBF9E"),
+        new("HIIT", 15, "#4C5B68")
+    };
+
+    private List<ActivityEntry> recentActivity = new()
+    {
+        new("Jul 14", "Strength", "52 min", 410, "#D4FF3F"),
+        new("Jul 13", "Endurance", "38 min", 360, "#FF5A36"),
+        new("Jul 11", "Mobility", "30 min", 180, "#2FBF9E"),
+        new("Jul 10", "HIIT", "24 min", 320, "#4C5B68"),
+        new("Jul 9", "Strength", "48 min", 390, "#D4FF3F")
+    };
+
+    private readonly string[] weekLabels = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
+    private readonly int[] weekData = { 1, 0, 2, 1, 1, 2, 0 };
+
+    private readonly string[] weightLabels = { "Wk 1", "Wk 2", "Wk 3", "Wk 4", "Wk 5", "Wk 6", "Wk 7", "Wk 8" };
+    private readonly double[] weightData = { 76.4, 76.1, 75.6, 75.8, 75.2, 74.9, 74.6, 74.5 };
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("dashboardCharts.renderPie",
+                "workoutMixChart",
+                workoutMix.Select(m => m.Label).ToArray(),
+                workoutMix.Select(m => m.Value).ToArray(),
+                workoutMix.Select(m => m.Color).ToArray());
+
+            await JS.InvokeVoidAsync("dashboardCharts.renderBar",
+                "weeklySessionsChart", weekLabels, weekData, "#101820");
+
+            await JS.InvokeVoidAsync("dashboardCharts.renderLine",
+                "weightTrendChart", weightLabels, weightData, "#FF5A36");
+        }
+    }
+}

@@ -1,0 +1,15 @@
+﻿@using DashboardUI.Models
+
+<div class="row d-flex flex-row justify-content-center align-content-center gap-1">
+    <div class="col-3 w-100 h-auto diet-card py-3">
+        <a class="diet-card-link mt-3 fw-semibold text-decoration-none" href="@Recipe?.DetailUrl">
+            <img class="card-image mb-1" src="@Recipe?.ImageUrl" alt="@Recipe?.CardTitle" />
+            <span class="d-block text-center fw-bold fs-6">@Recipe?.CardTitle</span>
+        </a>        
+    </div>
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public RecipeCardModel? Recipe { get; set; }
+}

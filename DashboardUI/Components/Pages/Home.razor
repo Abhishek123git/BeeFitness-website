@@ -1,0 +1,124 @@
+﻿@page "/"
+
+@inject NavigationManager Navigation
+
+<PageTitle>Home</PageTitle>
+
+<div class="home-page rounded-3">
+
+    <nav class="topnav">
+        <div class="brand">FORM<span>&</span>FUNCTION</div>
+        <div class="nav-links">
+            <a href="/programs">Programs</a>
+            <a href="/schedule">Schedule</a>
+            <a href="/pricing">Pricing</a>
+        </div>
+        <button class="btn btn-cta" @onclick="GoToSignup">Join now</button>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-copy">
+            <div class="eyebrow">Member ID · open enrollment</div>
+            <h1>Train like it's <span>game day.</span></h1>
+            <p>Strength, endurance and mobility programming built around your numbers &mdash; not a generic plan. Track every session, every stat, every rep.</p>
+            <div class="hero-actions">
+                <button class="btn btn-cta btn-lg" @onclick="GoToSignup">Start your trial</button>
+                <button class="btn btn-ghost btn-lg" @onclick="GoToProgramsPage">See programs</button>
+            </div>
+        </div>
+
+        <div class="hero-card">
+            <div class="idcard-top">
+                <span>Live snapshot</span>
+                <span>Today</span>
+            </div>
+            <div class="hero-stat-rail">
+                @foreach (var stat in heroStats)
+                {
+                    <div class="hero-stat">
+                        <div class="hero-stat-value">@stat.Value<span>@stat.Unit</span></div>
+                        <div class="hero-stat-label">@stat.Label</div>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+
+    <div class="tick-divider"><span>Programs</span></div>
+
+    <section class="programs">
+        @foreach (var program in programs)
+        {
+            <div class="program-card">
+                <div class="program-icon">@program.Glyph</div>
+                <h3>@program.Name</h3>
+                <p>@program.Description</p>
+                <div class="program-meta">@program.SessionsPerWeek sessions / week</div>
+            </div>
+        }
+    </section>
+
+    <div class="tick-divider"><span>How it works</span></div>
+
+    <section class="steps">
+        @foreach (var step in steps)
+        {
+            <div class="step">
+                <div class="step-number">@step.Number</div>
+                <div>
+                    <h4>@step.Title</h4>
+                    <p>@step.Description</p>
+                </div>
+            </div>
+        }
+    </section>
+
+    <div class="tick-divider"><span>Member spotlight</span></div>
+    
+    <section class="cta-banner">
+        <h2>Ready to put up numbers?</h2>
+        <p>First session is on us. No contract, cancel anytime.</p>
+        <button class="btn btn-cta btn-lg" @onclick="GoToSignup">Claim your trial</button>
+    </section>
+
+    <footer class="footer">
+        <div class="brand">FORM<span>&</span>FUNCTION</div>
+        <div class="footer-links">
+            <a href="/about">About</a>
+            <a href="/contact">Contact</a>
+            <a href="/privacy">Privacy</a>
+        </div>
+    </footer>
+
+</div>
+
+@code {
+    private void GoToSignup() => Navigation.NavigateTo("/signup");
+    private void GoToProgramsPage() => Navigation.NavigateTo("/programs");
+
+    private record HeroStat(string Value, string Unit, string Label);
+    private record Program(string Glyph, string Name, string Description, int SessionsPerWeek);
+    private record Step(string Number, string Title, string Description);
+
+    private List<HeroStat> heroStats = new()
+    {
+        new("12.4", "k", "Active members"),
+        new("48", "", "Classes this week"),
+        new("4.9", "/5", "Average rating")
+    };
+
+    private List<Program> programs = new()
+    {
+        new("S", "Strength", "Progressive overload programming with logged 1RMs and plate math built in.", 3),
+        new("E", "Endurance", "Zone-based cardio blocks for runners, rowers and cyclists at every level.", 4),
+        new("M", "Mobility", "Recovery-focused sessions to keep joints healthy between hard training days.", 2),
+        new("H", "HIIT", "Short, high-output circuits for when you're tight on time but not on effort.", 3)
+    };
+
+    private List<Step> steps = new()
+    {
+        new("01", "Set your baseline", "Log your current stats and goal &mdash; weight, endurance, or strength targets."),
+        new("02", "Get your program", "We match you to a track and build a weekly schedule around it."),
+        new("03", "Track every session", "Log reps, times and weights as you go. Your stat rail updates in real time.")
+    };
+}
