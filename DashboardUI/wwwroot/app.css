@@ -10,14 +10,22 @@
     --cone: #FF5A36;
     --cone-soft: #FFE7DF;
     --muted: #7C867A;
-    --chalk: #101820;   
+    --chalk: #101820;
+    --sl-purple-dark: #4a4ecf;
+    --hive-purple: #5b4fe8;
+    --hive-purple-dark: #4a3fd6;
+    --hive-lime: #a8e063;
+    --hive-muted: #6b7080;
+    --hive-card: #ffffff;
+    --hive-border: #e6e5f5;
+    --hive-ink: #1f2333;
 }
 
 html, body {
-    height:100%;
-    margin:0;
-    padding: 0.3rem;    
-    overflow: hidden; /* prevents scrolling */
+    height: 100%;
+    margin: 0;
+    padding: 0.3rem;
+    overflow: hidden; /* prevents scrolling */    
 }
 
 /* tick divider — signature element */
@@ -100,10 +108,6 @@ a, .btn-link {
     color: #fff;
     background-color: #1b6ec2;
     border-color: #1861ac;
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  //box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 .content {
@@ -300,4 +304,373 @@ h1:focus {
     color: black !important; 
     background-color: #fff;
     border-radius: 0.5rem;
+}
+
+.title-block h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    line-height: 1.15;
+    margin: 0;
+    color: #1f2937;
+}
+
+.gender-toggle .btn.active {
+    background-color: var(--bg);
+    color: #fff;
+}
+
+.gender-toggle .btn {    
+    transition: background-color .2s ease;
+}
+
+.unit-toggle .btn.active {
+    background-color: var(--bg);
+    color: #fff;
+}
+
+.unit-toggle .btn {
+    transition: background-color .2s ease;
+}
+
+.field-label {    
+    min-width: 92px;
+}
+
+.header {   
+    background: var(--bg);
+}
+
+.nav ul {
+    display: flex;
+    gap: 1rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-link {
+    text-decoration: none;
+    color: #FFFFFF;
+    transition: color .2s ease;
+}
+
+.nav-link.active {
+    color: #fff;
+    border-bottom: 2px solid #0f766e;
+}
+
+.nav-link:hover {
+    color: #fff;
+}
+
+/* Hamburger */
+.menu-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.menu-toggle .bar {
+    width: 24px;
+    height: 2px;
+    background: #fff;
+}
+
+.section-wrap {
+    max-width: 1180px;    
+}
+
+.section-block + .section-block {
+    margin-top: 2.5rem;
+}
+
+.section-head .bee-dot {
+    width: 10px;
+    height: 10px;
+    background: var(--hive-lime);    
+}
+
+.section-head h2 {
+    font-family: 'Poppins', sans-serif;   
+    font-size: 1.15rem;
+    letter-spacing: .03em;  
+    color: var(--hive-ink);    
+}
+
+.cat-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);    
+}
+
+.cat-card {
+    background: var(--hive-card);
+    border: 1px solid var(--hive-border);      
+    min-height: 118px;    
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+
+.cat-card:hover, .cat-card:focus-visible {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 24px rgba(91, 79, 232, 0.15);
+    border-color: var(--hive-purple);
+    outline: none;
+}
+
+.cat-card .icon-badge {
+    width: 38px;
+    height: 38px;   
+    background: rgba(91, 79, 232, 0.08);
+    color: var(--hive-purple);    
+    transition: background .18s ease, color .18s ease;
+}
+
+.cat-card:hover .icon-badge {
+    background: var(--hive-purple);
+    color: #fff;
+}
+
+.cat-card .cat-label {    
+    font-size: .92rem;
+    line-height: 1.35;
+    color: var(--hive-ink);
+}
+
+/* view-all card gets the accent treatment */
+.cat-card.view-all {
+    background: var(--hive-purple);
+    border-color: var(--hive-purple);
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.cat-card.view-all .icon-badge {
+    background: rgba(255,255,255,0.16);
+    color: #fff;
+}
+
+.cat-card.view-all .cat-label {
+    color: #fff;
+}
+
+.cat-card.view-all:hover {
+    background: var(--hive-purple-dark);
+    border-color: var(--hive-purple-dark);
+    box-shadow: 0 10px 24px rgba(91, 79, 232, 0.3);
+}
+
+.cat-card.view-all:hover .icon-badge {
+    background: rgba(255,255,255,0.24);
+    color: #fff;
+}
+
+/* Responsive */
+@media (max-width: 767.98px) {
+    .card-panel {
+        padding: 20px 18px 16px;
+    }
+
+    .field-row {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: .4rem !important;
+    }
+
+    .field-label {
+        min-width: auto;
+    }
+
+    .lift-image-wrap {
+        min-height: 180px;
+        margin-top: 1rem;
+    }
+
+    .menu-toggle {
+        display: flex;
+    }
+
+    .nav {
+        position: absolute;
+        top: 64px;
+        left: 0;
+        right: 0;
+        background: #111;
+        transform: translateY(-200%);
+        transition: transform .3s ease;
+        flex-direction: column;
+    }
+
+    .nav.open {
+        transform: translateY(0);
+    }
+
+    .nav ul {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem;
+    }
+}
+
+@media (min-width: 576px) {
+    .cat-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 992px) {
+    .cat-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (min-width: 1200px) {
+    .cat-grid {
+        grid-template-columns: repeat(5, 1fr);
+    }
+}
+
+.hive-card {    
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.hive-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(27, 27, 58, 0.1);
+    border-color: transparent;
+}
+
+.hive-card:focus-visible {
+    outline: 2px solid var(--hive-violet);
+    outline-offset: 2px;
+}
+
+.hive-card--active {
+    border-color: var(--hive-violet);
+    box-shadow: 0 0 0 2px rgba(91, 79, 233, 0.15);
+}
+
+.hive-card__icon {    
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;    
+    background: color-mix(in srgb, var(--icon-tint) 14%, white);
+    color: var(--icon-tint);    
+}
+
+.hive-card__label {    
+    font-family: var(--hive-font-body);
+    color: var(--hive-charcoal);
+}
+
+.hive-card__chevron {    
+    color: rgba(38, 36, 51, 0.25);    
+    transition: transform 0.15s ease, color 0.15s ease;
+}
+
+.hive-card:hover .hive-card__chevron {
+    transform: translateX(3px);
+    color: var(--hive-violet);
+}
+
+/* ---------- Inline calculator panel ---------- */
+
+.hive-calc-panel {   
+    padding: 1.75rem 1.5rem 1.5rem;
+    box-shadow: 0 12px 30px rgba(27, 27, 58, 0.1);
+    animation: hiveFadeIn 0.18s ease;
+}
+
+.hive-calc-panel--muted {
+    color: var(--hive-charcoal);    
+}
+
+@keyframes hiveFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ---------- Empty state ---------- */
+
+.font-body {
+    font-family: var(--hive-font-body);
+}
+
+.text-violet {
+    color: var(--hive-violet) !important;
+}
+
+.py-custom {
+    padding-block: 3.5rem !important;
+}
+
+/* AuthModal.razor.css — scoped */
+
+.hive-modal-wrap {
+    z-index: 1055;
+}
+
+.hive-modal {
+    border: none;
+    border-radius: 1rem;
+    padding: 0.5rem;
+}
+
+.hive-modal__title {   
+    font-weight: 700;
+    color: var(--hive-ink);
+}
+
+.hive-modal__tabs {
+    display: flex;
+    gap: 0.4rem;
+    background: #F1F1F6;
+    padding: 0.3rem;
+    border-radius: 999px;
+    margin-bottom: 1.25rem;
+}
+
+.hive-modal__tab {
+    flex: 1 1 0;
+    border: none;
+    background: transparent;
+    font-family: var(--hive-font-body);
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--hive-charcoal);
+    padding: 0.5rem 0;
+    border-radius: 999px;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.hive-modal__tab.active {
+    background: var(--hive-violet);
+    color: #fff;
+}
+
+.hive-modal__submit {
+    background: var(--hive-violet);
+    color: #fff;
+    font-weight: 600;
+    border-radius: 0.6rem;
+    padding: 0.6rem 0;
+    margin-top: 0.25rem;
+}
+
+.hive-modal__submit:hover:not(:disabled) {
+    background: var(--hive-violet-dark);
+    color: #fff;
+}
+
+.hive-modal__submit:disabled {
+    opacity: 0.7;
 }

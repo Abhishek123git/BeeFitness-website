@@ -10,3 +10,8 @@ window.isTabActive = function (selector) {
     var el = document.querySelector(selector);
     return el && el.classList.contains("active");
 };
+
+window.hiveScrollIntoView = (selector) => {
+    const el = document.querySelector(selector);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+};

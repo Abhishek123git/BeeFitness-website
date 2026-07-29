@@ -1,0 +1,116 @@
+﻿@using DashboardUI.Models
+@if (IsVisible)
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog"
+         style="background-color: rgba(0,0,0,0.5);" @onclick="HandleBackdropClick">
+        <div class="modal-dialog modal-dialog-centered @SizeClass" role="document" @onclick:stopPropagation="true">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@Title</h5>
+                    <button type="button" class="btn-close" aria-label="Close" @onclick="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <EditForm Model="formModel" OnValidSubmit="HandleValidSubmit">
+                        <DataAnnotationsValidator />
+
+                        <div class="mb-3 row align-items-center">
+                            <label class="col-3 fw-bold">Exercise</label>
+                            <div class="col-9">
+                                <input class="form-control bg-light text-muted shadow-none" value="@formModel.Exercise" readonly />
+                            </div>
+                        </div>
+
+                        <div class="mb-3 row align-items-center">
+                            <label class="col-3 fw-bold">Gender</label>
+                            <div class="col-9">
+                                <InputSelect class="form-select shadow-none" @bind-Value="formModel.Gender">
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </InputSelect>
+                                <ValidationMessage For="@(() => formModel.Gender)" />
+                            </div>
+                        </div>
+
+                        <div class="mb-3 row align-items-center">
+                            <label class="col-3 fw-bold">Age</label>
+                            <div class="col-9">
+                                <div class="input-group">
+                                    <InputNumber class="form-control shadow-none" @bind-Value="formModel.Age" />
+                                    <span class="input-group-text">years old</span>
+                                </div>
+                                <ValidationMessage For="@(() => formModel.Age)" />
+                            </div>
+                        </div>
+
+                        <div class="mb-3 row align-items-center">
+                            <label class="col-3 fw-bold">Bodyweight</label>
+                            <div class="col-9">
+                                <div class="input-group">
+                                    <InputNumber class="form-control shadow-none" @bind-Value="formModel.Bodyweight" step="0.1" />
+                                    <span class="input-group-text">kg</span>
+                                </div>
+                                <ValidationMessage For="@(() => formModel.Bodyweight)" />
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" @onclick="RunCalculation">Create</button>
+                    </EditForm>             
+                    @ChildContent
+                </div>                
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public bool IsVisible { get; set; }
+    [Parameter] public EventCallback<bool> IsVisibleChanged { get; set; }
+    [Parameter] public string Title { get; set; } = string.Empty;
+    [Parameter] public string Size { get; set; } = "default"; // "sm", "default", "lg", "xl"
+    [Parameter] public bool CloseOnBackdropClick { get; set; } = true;
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public RenderFragment? FooterContent { get; set; }    
+    [Parameter] public string ExerciseName { get; set; } = string.Empty;
+
+    private bool showCalculateModal = false;    
+    private void CloseCalculateModal() => showCalculateModal = false;
+
+    private void RunCalculation()
+    {
+        showCalculateModal = false;
+    }
+
+    private CreateStandardsModel formModel = new();
+
+    protected override void OnParametersSet()
+    {
+        formModel.Exercise = ExerciseName;
+    }
+
+    private void HandleValidSubmit()
+    {
+        // formModel.Gender, formModel.Age, formModel.Bodyweight are validated and ready to use
+    }
+
+    private string SizeClass => Size switch
+    {
+        "sm" => "modal-sm",
+        "lg" => "modal-lg",
+        "xl" => "modal-xl",
+        _ => ""
+    };
+
+    private async Task Close()
+    {
+        IsVisible = false;
+        await IsVisibleChanged.InvokeAsync(false);
+    }
+
+    private async Task HandleBackdropClick()
+    {
+        if (CloseOnBackdropClick)
+        {
+            await Close();
+        }
+    }
+}

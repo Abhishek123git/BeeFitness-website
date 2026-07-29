@@ -1,26 +1,113 @@
-﻿<div class="header px-4">
-    <div class="btn-group dropdown">
-        <button type="button" class="btn">
-            <span>
-                <svg width="31" height="31" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="60" cy="60" r="58" fill="#F0F0F0" stroke="#9E9E9E" stroke-width="2" />
-                    <circle cx="60" cy="48" r="20" fill="#9E9E9E" />
-                    <path d="M60 74c-22 0-38 14-38 34a58 58 0 0076 0c0-20-16-34-38-34z" fill="#9E9E9E" />
-                </svg>
-                SignIn/LogIn
-            </span>
-        </button>
-        <button type="button" class="btn dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
-            <span class="visually-hidden">Toggle Dropdown</span>
-        </button>
-        <ul class="dropdown-menu">
-            <NavLink class="dropdown-item" href="/viewprofile">View profile</NavLink>
-            <NavLink class="dropdown-item" href="#">Create Account/Login</NavLink>
-            <NavLink class="dropdown-item" href="/dashboard">Dashboard</NavLink>
-        </ul>
+﻿@rendermode InteractiveServer
+@using DashboardUI.Components.Shared
+
+<header class="header position-sticky text-white py-5 z-1">
+    <div class="container-fluid">
+        <div class="d-flex align-items-center justify-content-between">
+            <!-- Brand -->
+            <div class="d-flex align-items-center">
+                <a href="/" class="fw-bold text-white">
+                    <img class="img-fluid w-100 h-100" src="assets/images/beefitnesslogo.svg" alt="Bee Fitness Logo" />
+                </a>
+            </div>
+
+            <!-- Hamburger toggle (mobile only) -->
+            <button class="menu-toggle d-md-none" @onclick="ToggleMenu" aria-label="Toggle navigation">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+
+            <!-- Navigation -->
+            <nav class="@NavClass w-100 d-flex justify-content-center align-content-center">
+                <ul class="nav flex-row flex-md-row flex-column gap-3 py-4">
+                    <li><NavLink class="text-white text-decoration-none d-flex flex-column align-items-center px-3 py-2" href="/" Match="NavLinkMatch.All"><i class="bi bi-house-door"></i>Home</NavLink></li>
+                    <li>
+                        <NavLink class="text-white text-decoration-none d-flex flex-column align-items-center px-3 py-2" href="/articles">
+                            <i class="bi bi-file-earmark-text"></i>
+                            Articles
+                        </NavLink>
+                    </li>
+                    <li>
+                        <NavLink class="text-white text-decoration-none d-flex flex-column align-items-center px-3 py-2" href="/exercies">
+                            <svg width="32" height="25" viewBox="0 0 100 100" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <g fill ="none" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="10" y="35" width="10" height="30" rx="3" />
+                                    <rect x="22" y="42" width="9" height="16" rx="3" />
+                                    <rect x="69" y="42" width="9" height="16" rx="3" />
+                                    <rect x="80" y="35" width="10" height="30" rx="3" />
+                                    <rect x="31" y="47" width="38" height="6" rx="2" />
+                                </g>
+                            </svg>
+                            Exercises
+                        </NavLink>
+                    </li>
+                    <li><NavLink class="text-white text-decoration-none d-flex flex-column align-items-center px-3 py-2" href="/dashboard"><svg width="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18" /><path d="M7 15l4-6 3 4 5-8" /></svg> Dashboard</NavLink></li>
+                    <li>
+                        <NavLink class="text-white text-decoration-none d-flex flex-column align-items-center px-3 py-2" href="/dietplans">
+                            <svg width="24" height="24" viewBox="0 0 120 140" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="10" y="15" width="100" height="120" rx="10" stroke-width="9" />
+                                <rect x="40" y="5" width="40" height="20" rx="5" fill="#0f766e" />
+                                <path d="M30 50 L38 58 L54 42" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M30 80 L38 88 L54 72" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M30 110 L38 118 L54 102" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" />
+                                <line x1="65" y1="50" x2="90" y2="50" stroke-width="9" stroke-linecap="round" />
+                                <line x1="65" y1="80" x2="90" y2="80" stroke-width="9" stroke-linecap="round" />
+                                <line x1="65" y1="110" x2="90" y2="110" stroke-width="9" stroke-linecap="round" />
+                            </svg>
+                            Diet Plans
+                        </NavLink>
+                    </li>
+                    <li>
+                        <NavLink class="text-white text-decoration-none d-flex flex-column align-items-center px-3 py-2" href="/tools">
+                            <i class="bi bi-grid-3x3-gap-fill"></i>
+                            Tools
+                        </NavLink>
+                    </li>            
+                </ul>
+            </nav>    
+
+            <!-- Profile dropdown -->
+            <div class="btn-group dropdown border-1 border rounded-3 w-25">             
+                <button type="button" class="btn d-flex align-items-center gap-2 shadow-none">
+                    <svg width="31" height="31" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="60" cy="60" r="58" fill="#F0F0F0" stroke="#9E9E9E" stroke-width="2" />
+                        <circle cx="60" cy="48" r="20" fill="#9E9E9E" />
+                        <path d="M60 74c-22 0-38 14-38 34a58 58 0 0076 0c0-20-16-34-38-34z" fill="#9E9E9E" />
+                    </svg>
+                    <span class="fw-medium">SignIn / LogIn</span>
+                </button>
+                
+                <button type="button" class="btn dropdown-toggle dropdown-toggle-split shadow-none"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="visually-hidden">Toggle Dropdown</span>
+                </button>
+               
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                    <li><NavLink class="dropdown-item" href="/viewprofile">View Profile</NavLink></li>
+                    <li>
+                        <button type="button" class="dropdown-item" @onclick="OpenAuthModal">
+                            Create Account / Login
+                        </button>
+                    </li>
+                    <li><NavLink class="dropdown-item" href="/dashboard">Dashboard</NavLink></li>
+                </ul>
+            </div>
+
+        </div>
     </div>
-</div>
+
+</header>
+
+<SignupModal @bind-IsVisible="showAuthModal" />
 
 @code {
+    private bool isOpen = false;
+    private bool showAuthModal;
 
+    private string NavClass => isOpen ? "nav open" : "nav";
+    private void ToggleMenu() => isOpen = !isOpen;
+
+
+    private void OpenAuthModal() => showAuthModal = true;    
 }
