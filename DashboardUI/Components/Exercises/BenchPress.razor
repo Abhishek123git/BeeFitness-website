@@ -1,0 +1,245 @@
+﻿@using DashboardUI.Components.Shared
+@using DashboardUI.Models
+@inject IJSRuntime JSRuntime
+@rendermode InteractiveServer
+@inherits ExerciseComponentBase
+
+<section class="container w-100">
+    <div class="bg-white border border-2 rounded-3 p-4">
+        <div class="row g-4">
+            <!-- Left: content -->
+            <div class="col-lg-8 order-2 order-lg-1">
+                <div class="d-flex align-items-start gap-3 mb-3">
+                    <img class="img-fluid" src="assets/images/benchpress.webp" />
+                    <div class="title-block">
+                        <h1>Bench Press Standards</h1>
+                        <h4>Measured in @activeWeightUnit</h4>
+                    </div>
+                </div>
+
+                <p class="fs-6 mx-auto mb-4">
+                    Bench Press strength standards help you to compare your one-rep max lift with other lifters at your bodyweight.
+                </p>
+
+                <div class="d-flex align-items-center field-row mb-3 gap-3">
+                    <span class="field-label fw-bold fs-6 text-dark">Exercise</span>
+                    <div class="flex-grow-1">
+                        <div class="d-flex align-items-center justify-content-between w-100 border rounded px-3 py-2 fs-6 text-dark bg-white">
+                            <span>Bench Press</span>
+                            <i class="bi bi-chevron-down text-dark">▾</i>
+                        </div>
+                    </div>
+                    <div style="min-width:160px;">
+                        <div class="d-flex align-items-center justify-content-between w-100 border rounded px-3 py-2 fs-6 text-dark bg-white">
+                            <span>Compare With</span>
+                            <i class="bi bi-chevron-down text-dark">▾</i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center field-row mb-4 gap-3">
+                    <span class="field-label fw-bold fs-6 text-dark">Weight Unit</span>
+                    <div class="btn-group unit-toggle border rounded" role="group" aria-label="Weight unit">
+                        <button type="button" id="btnpond" class="btn @(activeWeightUnit == "lb" ? "active" : "") shadow-none" @onclick='() => SetActiveWeightUnit("lb")'>Pounds (lb)</button>
+                        <button type="button" id="btnkg" class="btn @(activeWeightUnit == "kg" ? "active" : "") shadow-none" @onclick='() => SetActiveWeightUnit("kg")'>Kilograms (kg)</button>
+                    </div>
+                </div>
+                
+            </div>
+
+            <!-- Right: image -->
+            <div class="col-lg-4 order-1 order-lg-2 d-flex flex-column">
+                <div class="lift-image-wrap position-relative d-flex align-items-center justify-content-center h-100 min-vh-25">
+                    <img class="img-fluid" src="assets/images/bench-press-square.webp" alt="Lift image" />
+                </div>               
+            </div>
+        </div>
+        <div class="bg-light w-100 rounded px-3 py-2 fs-6 text-secondary d-flex align-items-center gap-2">
+            <i class="bi bi-info-circle text-dark"></i>
+            <span>Our community Bench Press standards are based on 48,718,584 lifts by Strength Level users</span>
+        </div>
+    </div>
+
+    <div class="gender-toggle d-flex rounded-3 overflow-hidden border bg-white my-2">
+        <button type="button" id="btnMale" class="btn @(activeGender == "male" ? "active" : "") d-flex align-items-center justify-content-center gap-2 p-3 fw-bold fs-5 text-decoration-none flex-fill shadow-none" @onclick='() => SetActiveGender("male")'>
+            <i class="bi bi-gender-male"></i>Male
+        </button>                
+        <button type="button" id="btnFemale" class="btn @(activeGender == "female" ? "active" : "") d-flex align-items-center justify-content-center gap-2 p-3 fw-bold fs-5 text-decoration-none flex-fill shadow-none" @onclick='() => SetActiveGender("female")'>
+            <i class="bi bi-gender-female"></i> Female
+        </button>      
+    </div>
+
+    <div class="bg-white border border-2 rounded-3 p-4">
+        <div class="row mb-2">
+
+            <!--Left section-->
+            <div class="col-lg-6 order-2 order-lg-1">
+                <div class="d-flex align-items-start gap-3 mb-3">                   
+                    <div class="title-block">
+                        <h3 class="fw-bold"><span class="text-capitalize">@activeGender</span> Bench Press Standards (@activeWeightUnit)</h3>
+                        <h4 class="my-4 fw-bold">Entire Community</h4>
+                        <div class="btn-group border rounded unit-toggle" role="group" aria-label="Weight unit">
+                            <button id="weightButton" type="button"
+                                    class="btn @(activeTab == "weight" ? "active" : "") shadow-none"
+                                    @onclick='() => SetActiveTab("weight")'>
+                                Weight
+                            </button>
+
+                            <button id="bodyweightButton" type="button"
+                                    class="btn @(activeTab == "bodyweight" ? "active" : "") shadow-none"
+                                    @onclick='() => SetActiveTab("bodyweight")'>
+                                Bodyweight Ratio
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab content -->
+                <div class="tab-content mt-3">
+                    <table class="table h-auto">
+                        <thead>
+                            <tr class="fw-bold">
+                                <th class="text-start px-3 py-2">Strength Level</th>
+                                <th class="text-center px-3 py-2">
+                                    @(activeTab == "weight" ? "Weight" : "Bodyweight Ratio")
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var row in CurrentData)
+                            {
+                                <tr>
+                                    <td class="text-start px-3 py-2">@row.Level</td>
+                                    <td class="text-center px-3 py-2">
+                                        @if (activeTab == "weight")
+                                        {
+                                            @DisplayWeight(row)@activeWeightUnit
+                                        }
+                                        else
+                                        {
+                                            @row.BodyweightRatio.ToString("0.00")
+                                    
+                                            <text>x</text>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>           
+
+            <!--Right section-->
+            <div class="col-lg-6 order-1 order-lg-2 d-flex flex-column rounded bg-light p-3">
+                <h4 class="fw-bold text-center">How much should I be able to Bench Press? (@activeWeightUnit)</h4>
+                <div class="d-flex w-100 h-auto justify-content-around text-center">
+                    <p class="d-block"><small class="text-uppercase text-muted">Beginner</small><br /><span class="fw-bold fs-3">@DisplayWeight(BeginnerRow) @activeWeightUnit</span></p>
+                    <p class="d-block"><small class="text-uppercase text-muted">Intermediate</small><br /><span class="fw-bold fs-3">@DisplayWeight(IntermediateRow) @activeWeightUnit</span></p>
+                </div>                
+                <p><span class="fw-bold">What is the average Bench Press? </span>The average Bench Press weight for a @activeGender lifter is @DisplayWeight(IntermediateRow) @activeWeightUnit (1RM). This makes you Intermediate on Strength Level and is a very impressive lift.</p>
+                <p><span class="fw-bold">What is a good Bench Press? </span> <span class="text-capitalize">@activeGender</span> beginners should aim to lift @DisplayWeight(BeginnerRow) @activeWeightUnit (1RM) which is still impressive compared to the general population.</p>
+            </div>  
+            
+        </div>
+        <div class="bg-light w-100 rounded px-3 py-2 fs-6 text-secondary align-items-center gap-2">
+            <i class="bi bi-info-circle text-dark"></i>
+            <span>Barbell weights include the weight of the bar, normally 20 kg / 44 lb.</span>
+        </div>
+    </div>
+
+    <div class="bg-white border border-2 rounded-3 p-4 my-2">
+        <h3 class="fw-bold">Create Standards</h3>
+        <p>Would you like to see a table for your bodyweight and age? Create your own standards.</p>
+        <button class="btn btn-sm rounded btn-primary" @onclick="OpenCalculateModal">Create Standards</button>
+    </div>
+
+    <div class="bg-white border border-2 rounded-3 p-4 my-2">
+        <h3 class="fw-bold">What do the strength standards mean?</h3>
+        <div class="tab-content mt-3">
+            <table class="table h-auto">                
+                <tbody>
+                    @foreach (var row in CurrentData)
+                    {
+                        <tr>
+                            <td class="text-start px-3 py-2 fw-bold">@row.Level</td>
+                            <td class="text-start px-3 py-2">
+                                @if (@row.Level == "Beginner")
+                                {
+                                    <p>Stronger than 5% of lifters. A beginner lifter can perform the movement correctly and has practiced it for at least a month.</p>
+                                }
+                                else if (@row.Level == "Novice")
+                                {
+                                    <p>Stronger than 20% of lifters. A novice lifter has trained regularly in the technique for at least six months.</p>
+                                }
+                                else if (@row.Level == "Intermediate")
+                                {
+                                    <p>Stronger than 50% of lifters. An intermediate lifter has trained regularly in the technique for at least two years.</p>
+                                }
+                                else if (row.Level == "Advanced")
+                                {
+                                    <p>Stronger than 80% of lifters. An advanced lifter has progressed for over five years.</p>
+                                }
+                                else
+                                {
+                                    <p>Stronger than 95% of lifters. An elite lifter has dedicated over five years to become competitive at strength sports.</p>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!--Create Standards Modal-->
+    <ModalPopup @bind-IsVisible="showCalculateModal" Title="Create Standards" ExerciseName="@ExerciseDisplayName">
+        <ChildContent />        
+    </ModalPopup>
+
+</section>
+
+@code {
+    private string activeTab = "weight";
+    private string activeWeightUnit = "lb";
+    private string activeGender = "male";
+
+    private bool showCalculateModal = false;
+    private void OpenCalculateModal() => showCalculateModal = true;        
+
+    protected override string ExerciseDisplayName => "Bench Press";
+
+    public record WeightLevel(string Level, double WeightLb, double BodyweightRatio);
+
+    private static readonly Dictionary<string, List<WeightLevel>> WeightData = new()
+    {
+        ["male"] = new()
+        {
+            new("Beginner",     49, 0.50),
+            new("Novice",       70, 1.00),
+            new("Intermediate", 96, 1.25),
+            new("Advanced",    127, 1.50),
+            new("Elite",       160, 2.00)
+        },
+        ["female"] = new()
+        {
+            new("Beginner",     19, 0.30),
+            new("Novice",       33, 0.50),
+            new("Intermediate", 51, 0.75),
+            new("Advanced",     72, 1.10),
+            new("Elite",        97, 1.45)
+        }
+    };
+
+    // Computed on demand instead of frozen to one gender at startup
+    private List<WeightLevel> CurrentData => WeightData[activeGender];
+
+    private WeightLevel BeginnerRow => CurrentData.First(r => r.Level == "Beginner");
+    private WeightLevel IntermediateRow => CurrentData.First(r => r.Level == "Intermediate");
+
+    private double DisplayWeight(WeightLevel w) =>
+        activeWeightUnit == "kg" ? Math.Round(w.WeightLb * 0.453592, 1) : w.WeightLb;
+
+    private void SetActiveTab(string tab) => activeTab = tab;
+    private void SetActiveWeightUnit(string unit) => activeWeightUnit = unit;
+    private void SetActiveGender(string gender) => activeGender = gender;
+}

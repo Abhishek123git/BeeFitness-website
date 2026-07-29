@@ -1,4 +1,8 @@
 ﻿@using System
+@using DashboardUI.Components.Exercises
+@inject TabStatus TabState
+@inject IJSRuntime JSRuntime
+@rendermode InteractiveServer
 
 <section>
     <p class="fs-1 fw-bold my-2">Weightlifting Strength Standards</p>
@@ -68,12 +72,12 @@
     </div>
 
     @* Exercise *@
-    <div class="container p-3">
+    <div class="container p-2">
         <div class="row g-2">
             @foreach (var ex in Exercises)
             {
                 <div class="col-3">
-                    <button class="exebtn w-100 d-flex justify-content-center align-items-center fw-bold text-center rounded-2 p-3 bg-light">
+                    <button class="exebtn w-100 d-flex justify-content-center align-items-center fw-bold text-center rounded-2 p-3 bg-light" @onclick="() => OpenExercisePanal(ex.Name)" >
                         <img src="/assets/images/@ex.Image"
                              class="img-fluid me-2"
                              alt="@ex.Name" />
@@ -84,12 +88,25 @@
         </div>
     </div>
 
+    <div class="container p-2">
+        @if (componentType != null)
+        {
+            <DynamicComponent Type="componentType" />
+        }
+    </div>
+
 </section>
 
 @code {
+    private Type? componentType;
+
     [Parameter] public EventCallback<string> OnSearchTextChanged { get; set; }
     [Parameter] public EventCallback<string> OnBodyPartChanged { get; set; }
     [Parameter] public EventCallback<string> OnCategoryChanged { get; set; }
+
+    private string SearchText { get; set; } = string.Empty;
+    private string SelectedBodyPart { get; set; } = string.Empty;
+    private string SelectedCategory { get; set; } = string.Empty;
 
     // Replace with your real data source (injected service, parameter, etc.)
     private List<Exercise> Exercises { get; set; } = new()
@@ -115,9 +132,32 @@
         "Barbell", "Bodyweight", "Dumbbell", "Machine", "Cable"
     };
 
-    private string SearchText { get; set; } = string.Empty;
-    private string SelectedBodyPart { get; set; } = string.Empty;
-    private string SelectedCategory { get; set; } = string.Empty;
+    private async Task OpenExercisePanal(string type)
+    {
+        try
+        {
+            var active = await JSRuntime.InvokeAsync<bool>("isTabActive", "#standardstab");
+            TabState.SetStandardsActive(active);
+
+            // Only assign if Standards tab is NOT active
+            componentType = active ? type switch
+            {
+                "Bench Press" => typeof(BenchPress),
+                "Squat" => typeof(Squat),
+                "Shoulder Press" => typeof(ShoulderPress),
+                "Deadlift" => typeof(Deadlift),
+                _ => null
+            } : null;
+        }
+        catch (Exception)
+        {
+            componentType = null;
+        }
+        finally
+        {
+            await InvokeAsync(StateHasChanged);
+        }
+    }    
 
     private async Task OnSearchChanged(KeyboardEventArgs e)
     {

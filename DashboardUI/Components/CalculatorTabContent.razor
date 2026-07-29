@@ -2,161 +2,140 @@
 @inject TabStatus TabState
 @inject IJSRuntime JSRuntime
 
-<div class="other-calculator row p-2 gap-1 d-flex justify-content-center align-content-center">
-    <button type="button" class="col-3 p-2 border rounded-2 d-flex align-items-center justify-content-center" @onclick='() => OpenCalculator("BMI")'>
-        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25"
-             viewBox="0 0 64 64" fill="none" stroke="black" stroke-width="2">
-            <rect x="8" y="8" width="48" height="48" rx="6" />
-            <rect x="14" y="12" width="36" height="10" rx="2" />
-            <text x="18" y="20" font-size="8" fill="black">BMI</text>
-            <circle cx="20" cy="30" r="4" />
-            <circle cx="32" cy="30" r="4" />
-            <circle cx="44" cy="30" r="4" />
-            <circle cx="20" cy="42" r="4" />
-            <circle cx="32" cy="42" r="4" />
-            <circle cx="44" cy="42" r="4" />
-            <path d="M24 52h16l-8-12z" />
-        </svg>
-        <span class="ms-2">BMI(Body Mass Index) Calculator</span>
-    </button>
 
-    <div class="col-3 p-2 border rounded-2 d-flex align-items-center justify-content-center">
-        <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42"
-             viewBox="0 0 64 64" fill="none" stroke="#333" stroke-width="2">
-            <rect x="12" y="40" width="40" height="8" rx="2" fill="#9e9e9e" stroke="#333" />
-            <circle cx="32" cy="28" r="4" fill="#ff6f61" />
-            <rect x="28" y="32" width="8" height="6" fill="#64b5f6" />
-            <rect x="24" y="38" width="4" height="6" fill="#64b5f6" />
-            <rect x="36" y="38" width="4" height="6" fill="#64b5f6" />
-            <line x1="16" y1="20" x2="48" y2="20" stroke="#333" stroke-width="3" />
-            <rect x="12" y="16" width="4" height="8" fill="#81c784" />
-            <rect x="48" y="16" width="4" height="8" fill="#81c784" />
-            <rect x="4" y="4" width="20" height="20" rx="3" fill="#f0f4f8" stroke="#333" />
-            <rect x="6" y="6" width="16" height="6" rx="1" fill="#4cafef" />
-            <text x="8" y="11" font-size="6" fill="white">Calc</text>
-            <circle cx="10" cy="16" r="2" fill="#ffd54f" />
-            <circle cx="16" cy="16" r="2" fill="#ba68c8" />
-        </svg>
-
-        <span class="ms-2">Bench Press Calculator: Calculate Your 1 REP MAX (1RM)</span>
-    </div>
-
-    <button type="button" class="col-3 p-2 border rounded-2 d-flex align-items-center justify-content-center" @onclick='() => OpenCalculator("BMR")'>
-        <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50"
-             viewBox="0 0 64 64" fill="none" stroke="#333" stroke-width="2">
-            <rect x="8" y="8" width="24" height="32" rx="4" fill="#f0f4f8" stroke="#333" />
-            <rect x="10" y="10" width="20" height="8" rx="2" fill="#4cafef" />
-            <text x="12" y="16" font-size="6" fill="white">BMR</text>
-            <circle cx="14" cy="24" r="2" fill="#ffd54f" />
-            <circle cx="20" cy="24" r="2" fill="#ba68c8" />
-            <circle cx="26" cy="24" r="2" fill="#81c784" />
-            <circle cx="14" cy="30" r="2" fill="#f06292" />
-            <circle cx="20" cy="30" r="2" fill="#64b5f6" />
-            <circle cx="26" cy="30" r="2" fill="#ff6f61" />
-            <path d="M44 20c-2 4-2 8 2 12-2-1-4-2-5-4-1 2-1 4 1 6-3-1-5-4-5-7 0-5 4-9 7-11z" fill="#ff9800" stroke="#e65100" />
-            <circle cx="44" cy="34" r="6" fill="#ffe082" stroke="#f57c00" />
-        </svg>
-        <span class="ms-2">BMR(Basal Metabolic Rate) Calculator</span>
-    </button>
-
-    <div class="col-3 p-2 border rounded-2 d-flex align-items-center justify-content-center">
-        <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42"
-             viewBox="0 0 64 64" fill="none" stroke="#333" stroke-width="2">
-            <rect x="8" y="8" width="20" height="28" rx="3" fill="#f0f4f8" stroke="#333" />
-            <rect x="10" y="10" width="16" height="6" rx="1" fill="#4cafef" />
-            <text x="12" y="15" font-size="5" fill="white">Wilks</text>
-            <circle cx="12" cy="20" r="2" fill="#ffd54f" />
-            <circle cx="18" cy="20" r="2" fill="#ba68c8" />
-            <circle cx="12" cy="26" r="2" fill="#81c784" />
-            <circle cx="18" cy="26" r="2" fill="#f06292" />
-            <line x1="32" y1="20" x2="56" y2="20" stroke="#333" stroke-width="3" />
-            <rect x="28" y="16" width="4" height="8" fill="#ff6f61" />
-            <rect x="56" y="16" width="4" height="8" fill="#ff6f61" />
-            <circle cx="44" cy="28" r="4" fill="#64b5f6" />
-            <rect x="40" y="32" width="8" height="6" fill="#64b5f6" />
-        </svg>
-        <span class="ms-2">Wilks Calculator(Wilks Coefficient)</span>
-    </div>
-    <button type="button"
-            class="col-3 p-2 border rounded-2 d-flex align-items-center justify-content-center"
-            @onclick='() => OpenCalculator("Strength")'>
-        <svg width="64" height="64" viewBox="0 0 680 300" xmlns="http://www.w3.org/2000/svg" role="img">
-            <g transform="translate(190,60)">
-                <g fill="#2563eb">
-                    <rect x="0" y="70" width="16" height="60" rx="3" />
-                    <rect x="20" y="55" width="10" height="90" rx="3" />
-                    <rect x="34" y="90" width="132" height="20" rx="4" />
-                    <rect x="166" y="55" width="10" height="90" rx="3" />
-                    <rect x="184" y="70" width="16" height="60" rx="3" />
-                </g>
-            </g>
-            <g transform="translate(310,150)">
-                <g fill="#0d9488">
-                    <rect x="0" y="60" width="30" height="40" rx="3" />
-                    <rect x="40" y="35" width="30" height="65" rx="3" />
-                    <rect x="80" y="10" width="30" height="90" rx="3" />
-                </g>
-            </g>
-        </svg>
-        <span class="ms-2">Strength Level calculates</span>
-    </button>
-    <button type="button"
-            class="col-3 p-2 border rounded-2 d-flex align-items-center justify-content-center"
-            @onclick='() => OpenCalculator("Protein")'>
-        <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 64 64">
-            <!-- Protein Jar -->
-            <rect x="8" y="16" width="24" height="28" rx="4" fill="#4A90E2" stroke="#2C3E50" stroke-width="2" />
-            <rect x="8" y="12" width="24" height="6" rx="2" fill="#2C3E50" />
-            <text x="20" y="32" font-size="6" text-anchor="middle" fill="#fff" font-weight="bold">PROTEIN</text>
-
-            <!-- Chicken Drumstick -->
-            <path d="M40 20c6 0 10 4 10 10s-4 10-10 10c-2 0-4-1-6-2l-4 4c-1 1-3 1-4 0s-1-3 0-4l4-4c-1-2-2-4-2-6 0-6 4-10 10-10z"
-                  fill="#F5A623" stroke="#D35400" stroke-width="2" />
-
-            <!-- Scoop -->
-            <rect x="30" y="42" width="14" height="6" rx="2" fill="#BDC3C7" stroke="#7F8C8D" stroke-width="1.5" />
-            <path d="M44 42c4 0 6 2 6 4s-2 4-6 4H30v-8h14z" fill="#ECF0F1" stroke="#95A5A6" stroke-width="1" />
-
-            <!-- Label -->
-            <text x="32" y="60" font-size="8" text-anchor="middle" fill="#2C3E50" font-weight="bold">Protein</text>
-        </svg>
-
-        <span class="ms-2">Protein Calculator</span>
-    </button>
+<div class="bg-light rounded p-4">
+    @if (ActiveTab == "Calculator")
+    {
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+            @foreach (var tool in CalculatorTools)
+            {
+                <div class="col">
+                    <button type="button"
+                            class="@CardClass(tool)"
+                            @onclick="() => OpenCalculator(tool.Key)"
+                            aria-pressed="@(tool.Key == activeKey)">
+                            <span class="hive-card__icon d-grid flex-shrink-0 rounded p-2 fs-5" style="--icon-tint: @(tool.Tint);">
+                                <i class="bi @tool.Icon"></i>
+                            </span>
+                            <span class="hive-card__label flex-grow-1 fw-semibold fs-6 lh-sm">@tool.Name</span>
+                            <i class="bi bi-chevron-right hive-card__chevron flex-shrink-0 fs-6"></i>
+                    </button>
+                </div>
+            }
+            
+        </div>
+    }
+    else
+    {
+        <div class="d-flex flex-column align-items-center gap-3 py-custom text-dark font-body">
+            <i class="bi bi-box fs-1 text-violet"></i>
+            <p class="m-0">
+                @(ActiveTab == "Standards"
+                                ? "Strength standards are being calibrated. Check back soon."
+                                : "Workout builder tools are being calibrated. Check back soon.")
+            </p>
+        </div>
+    }
 </div>
 
-@if (componentType != null)
+@if (isLoading)
 {
-    <DynamicComponent Type="componentType" />
+    <div class="hive-calc-panel position-relative mt-4 bg-white border rounded">
+        <span class="spinner-border spinner-border-sm text-primary" role="status" aria-hidden="true"></span>
+        <span class="ms-2">Loading calculator…</span>
+    </div>
 }
+else
+{
+    @if (componentType != null)
+    {
+        <div class="hive-calc-panel position-relative mt-4 bg-white border rounded" id="hiveCalcPanel">
+                <DynamicComponent Type="componentType" />
+            </div>
+    }    
+}   
 
 @code {
+    private string ActiveTab = "Calculator";
     private Type? componentType;
+    private string? activeKey;
+    private bool isLoading;   
+    
+    private string CardClass(Tool tool) =>
+    tool.Key == activeKey ? "hive-card d-flex align-items-center gap-3 w-100 h-100 bg-white border rounded p-3 text-start cursor-pointer hive-card--active" : "hive-card d-flex align-items-center gap-3 w-100 h-100 bg-white border rounded p-3 text-start cursor-pointer";
 
-    private async Task OpenCalculator(string type)
+    private static readonly Dictionary<string, Type> CalculatorComponents = new()
     {
+        ["BMI"] = typeof(BMICalculator),
+        ["Strength"] = typeof(StrengthCalculator),
+        ["BMR"] = typeof(BMRCalculator),
+        ["Protein"] = typeof(ProteinCalculator),
+        // TODO: implement and register these to match CalculatorTools below
+        // ["Bench"] = typeof(BenchPressCalculator),
+        // ["Wilks"] = typeof(WilksCalculator),
+    };
+
+    private async Task OpenCalculator(string key)
+    {       
+        if (activeKey == key && componentType != null)
+        {
+            CloseCalculator();
+            return;
+        }
+
+        isLoading = true;        
+        componentType = null;
+        activeKey = key;
+        StateHasChanged();
+
         try
         {
-            var active = await JSRuntime.InvokeAsync<bool>("isTabActive", "#standardstab");
-            TabState.SetStandardsActive(active);
+            var standardsActive = await JSRuntime.InvokeAsync<bool>("isTabActive", "#standardstab");
+            TabState.SetStandardsActive(standardsActive);
 
-            // Only assign if Standards tab is NOT active
-            componentType = active ? null : type switch
+            if (standardsActive)
             {
-                "BMI" => typeof(BMICalculator),
-                "Strength" => typeof(StrengthCalculator),
-                "BMR" => typeof(BMRCalculator),
-                "Protein" => typeof(ProteinCalculator),
-                _ => null
-            };
+                componentType = null;
+            }
+            if (CalculatorComponents.TryGetValue(key, out var type))
+            {
+                componentType = type;
+            }            
         }
-        catch (Exception)
+        catch (JSException)
         {
-            componentType = null;
+            // JS interop unavailable (e.g. prerendering) — fall back to showing the calculator anyway
+            if (CalculatorComponents != null && CalculatorComponents.TryGetValue(key, out var type))
+            {
+                componentType = type;
+            }            
         }
         finally
         {
+            isLoading = false;
             await InvokeAsync(StateHasChanged);
+            if (componentType != null)
+            {
+                await JSRuntime.InvokeVoidAsync("hiveScrollIntoView", "#hiveCalcPanel");
+            }
         }
     }
+
+    private void CloseCalculator()
+    {
+        componentType = null;
+        activeKey = null;       
+    }
+
+    private record Tool(string Name, string Key, string Icon, string Href, string Tint);
+
+    private readonly List<Tool> CalculatorTools = new()
+    {
+        new("BMI (Body Mass Index) Calculator",             "BMI",      "bi-rulers",         "/tools/bmi",            "#5B4FE9"),
+        new("Bench Press Calculator: Your 1 REP MAX (1RM)", "Bench",    "bi-bar-chart-fill", "/tools/bench-press",    "#FF7A1A"),
+        new("BMR (Basal Metabolic Rate) Calculator",        "BMR",      "bi-fire",           "/tools/bmr",             "#FF5A5F"),
+        new("Wilks Calculator (Wilks Coefficient)",         "Wilks",    "bi-award-fill",     "/tools/wilks",           "#2FA98C"),
+        new("Strength Level Calculator",                    "Strength", "bi-lightning-fill", "/tools/strength-level",  "#2FA98C"),
+        new("Protein Calculator",                           "Protein",  "bi-egg-fried",      "/tools/protein",         "#2E86DE"),
+    };
 }

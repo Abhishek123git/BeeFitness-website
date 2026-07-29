@@ -1,0 +1,187 @@
+﻿@using System.ComponentModel.DataAnnotations
+
+@if (IsVisible)
+{
+    <div class="modal fade show hive-modal-wrap" tabindex="-1" role="dialog" style="display:block;" @onclick="HandleBackdropClick">
+        <div class="modal-dialog modal-dialog-centered" role="document" @onclick:stopPropagation="true">
+            <div class="modal-content hive-modal">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title hive-modal__title">
+                        @(Mode == AuthMode.SignIn ? "Welcome back" : "Create your account")
+                    </h5>
+                    <button type="button" class="btn-close" aria-label="Close" @onclick="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="hive-modal__tabs" role="tablist">
+                        <button type="button"
+                                class="hive-modal__tab @(Mode == AuthMode.SignIn ? "active" : "")"
+                                @onclick="() => Mode = AuthMode.SignIn">
+                            Sign In
+                        </button>
+                        <button type="button"
+                                class="hive-modal__tab @(Mode == AuthMode.CreateAccount ? "active" : "")"
+                                @onclick="() => Mode = AuthMode.CreateAccount">
+                            Create Account
+                        </button>
+                    </div>
+
+                    @if (errorMessage is not null)
+                    {
+                        <div class="alert alert-danger py-2" role="alert">@errorMessage</div>
+                    }
+
+                    @if (Mode == AuthMode.SignIn)
+                    {
+                        <EditForm Model="signInModel" OnValidSubmit="HandleSignIn">
+                            <DataAnnotationsValidator />
+
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <InputText class="form-control" @bind-Value="signInModel.Email" placeholder="you@example.com" />
+                                <ValidationMessage For="() => signInModel.Email" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Password</label>
+                                <InputText type="password" class="form-control" @bind-Value="signInModel.Password" />
+                                <ValidationMessage For="() => signInModel.Password" />
+                            </div>
+
+                            <button type="submit" class="btn hive-modal__submit w-100" disabled="@isSubmitting">
+                                @(isSubmitting ? "Signing in…" : "Sign In")
+                            </button>
+                        </EditForm>
+                    }
+                    else
+                    {
+                        <EditForm Model="createModel" OnValidSubmit="HandleCreateAccount">
+                            <DataAnnotationsValidator />
+
+                            <div class="mb-3">
+                                <label class="form-label">Full name</label>
+                                <InputText class="form-control" @bind-Value="createModel.FullName" />
+                                <ValidationMessage For="() => createModel.FullName" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <InputText class="form-control" @bind-Value="createModel.Email" placeholder="you@example.com" />
+                                <ValidationMessage For="() => createModel.Email" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Password</label>
+                                <InputText type="password" class="form-control" @bind-Value="createModel.Password" />
+                                <ValidationMessage For="() => createModel.Password" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Confirm password</label>
+                                <InputText type="password" class="form-control" @bind-Value="createModel.ConfirmPassword" />
+                                <ValidationMessage For="() => createModel.ConfirmPassword" />
+                            </div>
+
+                            <button type="submit" class="btn hive-modal__submit w-100" disabled="@isSubmitting">
+                                @(isSubmitting ? "Creating account…" : "Create Account")
+                            </button>
+                        </EditForm>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+
+@code {
+    [Parameter] public bool IsVisible { get; set; }
+    [Parameter] public EventCallback<bool> IsVisibleChanged { get; set; }
+
+    /// <summary>Fired after a successful sign-in or account creation, e.g. to refresh nav state.</summary>
+    [Parameter] public EventCallback OnAuthenticated { get; set; }
+
+    private enum AuthMode { SignIn, CreateAccount }
+    private AuthMode Mode = AuthMode.CreateAccount;
+
+    private readonly SignInModel signInModel = new();
+    private readonly CreateAccountModel createModel = new();
+
+    private bool isSubmitting;
+    private string? errorMessage;
+
+    private async Task Close()
+    {
+        IsVisible = false;
+        errorMessage = null;
+        await IsVisibleChanged.InvokeAsync(false);
+    }
+
+    private async Task HandleBackdropClick() => await Close();
+
+    private async Task HandleSignIn()
+    {
+        isSubmitting = true;
+        errorMessage = null;
+        try
+        {
+            // TODO: replace with your real auth service call
+            // await AuthService.SignInAsync(signInModel.Email, signInModel.Password);
+            await OnAuthenticated.InvokeAsync();
+            await Close();
+        }
+        catch (Exception)
+        {
+            errorMessage = "We couldn't sign you in. Check your email and password and try again.";
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
+    }
+
+    private async Task HandleCreateAccount()
+    {
+        isSubmitting = true;
+        errorMessage = null;
+        try
+        {
+            // TODO: replace with your real account-creation service call
+            // await AuthService.CreateAccountAsync(createModel.FullName, createModel.Email, createModel.Password);
+            await OnAuthenticated.InvokeAsync();
+            await Close();
+        }
+        catch (Exception)
+        {
+            errorMessage = "We couldn't create your account. Please try again.";
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
+    }
+
+    private class SignInModel
+    {
+        [Required, EmailAddress]
+        public string Email { get; set; } = "";
+
+        [Required]
+        public string Password { get; set; } = "";
+    }
+
+    private class CreateAccountModel
+    {
+        [Required]
+        public string FullName { get; set; } = "";
+
+        [Required, EmailAddress]
+        public string Email { get; set; } = "";
+
+        [Required, MinLength(6, ErrorMessage = "Password must be at least 6 characters.")]
+        public string Password { get; set; } = "";
+
+        [Required, Compare(nameof(Password), ErrorMessage = "Passwords do not match.")]
+        public string ConfirmPassword { get; set; } = "";
+    }
+}
