@@ -1,88 +1,122 @@
 ﻿@using System.ComponentModel.DataAnnotations
+@using DashboardUI.Components.Shared
+@inject CreateNewUser CreateNewUser
 
 @if (IsVisible)
 {
-    <div class="modal fade show hive-modal-wrap" tabindex="-1" role="dialog" style="display:block;" @onclick="HandleBackdropClick">
+    <div class="modal fade show d-block" tabindex="-1" role="dialog" @onclick="HandleBackdropClick">
         <div class="modal-dialog modal-dialog-centered" role="document" @onclick:stopPropagation="true">
-            <div class="modal-content hive-modal">
-                <div class="modal-header border-0 pb-0">
-                    <h5 class="modal-title hive-modal__title">
-                        @(Mode == AuthMode.SignIn ? "Welcome back" : "Create your account")
-                    </h5>
-                    <button type="button" class="btn-close" aria-label="Close" @onclick="Close"></button>
+            <div class="modal-content rounded-3 border-3 p-2">
+                <div class="modal-header border-0 d-flex flex-column gap-2 p-3 justify-content-center">
+                    <button type="button" class="btn-close" aria-label="Close" @onclick="Close"></button>                    
+                    <img class="img-fluid w-75 h-auto" src="assets/images/beefitnesslogo.svg" />                    
                 </div>
 
                 <div class="modal-body">
-                    <div class="hive-modal__tabs" role="tablist">
+                    <div class="d-flex gap-1 bg-light p-1 rounded-pill mb-4" role="tablist">
                         <button type="button"
-                                class="hive-modal__tab @(Mode == AuthMode.SignIn ? "active" : "")"
+                                class="hive-modal__tab border-0 flex-fill fw-semibold fs-6 py-2 rounded-pill @(Mode == AuthMode.SignIn ? "active" : "")"
                                 @onclick="() => Mode = AuthMode.SignIn">
                             Sign In
                         </button>
                         <button type="button"
-                                class="hive-modal__tab @(Mode == AuthMode.CreateAccount ? "active" : "")"
+                                class="hive-modal__tab border-0 flex-fill fw-semibold fs-6 py-2 rounded-pill @(Mode == AuthMode.CreateAccount ? "active" : "")"
                                 @onclick="() => Mode = AuthMode.CreateAccount">
                             Create Account
                         </button>
-                    </div>
-
-                    @if (errorMessage is not null)
-                    {
-                        <div class="alert alert-danger py-2" role="alert">@errorMessage</div>
-                    }
+                    </div>                    
 
                     @if (Mode == AuthMode.SignIn)
                     {
                         <EditForm Model="signInModel" OnValidSubmit="HandleSignIn">
                             <DataAnnotationsValidator />
 
-                            <div class="mb-3">
-                                <label class="form-label">Email</label>
-                                <InputText class="form-control" @bind-Value="signInModel.Email" placeholder="you@example.com" />
-                                <ValidationMessage For="() => signInModel.Email" />
+                            @if (passwordSent)
+                            {
+                                <p class="py-3">Your 6-digits password is send on <strong><i>@createModel.Email</i></strong> email address. Now enter password below to signIn.</p>
+                            }
+
+                            <div class="form-group d-flex gap-2 mb-3">
+                                <InputText id="email" class="form-control border-0 rounded-0 border-bottom fw-semibold shadow-none" @bind-Value="createModel.Email" @oninput="HandleEmailInput" placeholder="you@example.com" />
+                                <button id="sendpass" type="submit" class="hive-modal__submit fw-bold rounded py-2 px-4 shadow-none">
+                                    <i class="bi bi-send-fill"></i>
+                                </button>
+                                <ValidationMessage For="() => createModel.Email" />
                             </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Password</label>
-                                <InputText type="password" class="form-control" @bind-Value="signInModel.Password" />
+                            <div class="mb-3">                                
+                                <InputText type="password" class="form-control border-0 rounded-0 border-bottom fw-semibold shadow-none" @bind-Value="signInModel.Password" placeholder="enter password" />
                                 <ValidationMessage For="() => signInModel.Password" />
                             </div>
 
-                            <button type="submit" class="btn hive-modal__submit w-100" disabled="@isSubmitting">
+                            
+
+                            <button type="submit" class="hive-modal__submit fw-bold rounded px-2 py-2 mt-1 w-100 shadow-none" disabled="@isSubmitting">
                                 @(isSubmitting ? "Signing in…" : "Sign In")
                             </button>
                         </EditForm>
                     }
                     else
                     {
-                        <EditForm Model="createModel" OnValidSubmit="HandleCreateAccount">
+                        <EditForm Model="createModel" OnValidSubmit="HandleCreateAccount" Context="formContext">
                             <DataAnnotationsValidator />
 
                             <div class="mb-3">
-                                <label class="form-label">Full name</label>
-                                <InputText class="form-control" @bind-Value="createModel.FullName" />
+                                <InputText id="fname" class="form-control border-0 rounded-0 border-bottom fw-semibold shadow-none" placeholder="Enter your full name" @bind-Value="createModel.FullName" />
                                 <ValidationMessage For="() => createModel.FullName" />
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label">Email</label>
-                                <InputText class="form-control" @bind-Value="createModel.Email" placeholder="you@example.com" />
+                                <InputText id="email" class="form-control border-0 rounded-0 border-bottom fw-semibold shadow-none" @bind-Value="createModel.Email" placeholder="you@example.com" />
                                 <ValidationMessage For="() => createModel.Email" />
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label">Password</label>
-                                <InputText type="password" class="form-control" @bind-Value="createModel.Password" />
-                                <ValidationMessage For="() => createModel.Password" />
+                                <InputText type="tel" class="form-control border-0 rounded-0 border-bottom fw-semibold shadow-none" @bind-Value="createModel.Phone" placeholder="Enter your phone number (Optional)" />
+                                <ValidationMessage For="() => createModel.Phone" />
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label">Confirm password</label>
-                                <InputText type="password" class="form-control" @bind-Value="createModel.ConfirmPassword" />
-                                <ValidationMessage For="() => createModel.ConfirmPassword" />
+                                <InputDate id="dob" class="form-control border-0 rounded-0 border-bottom fw-semibold shadow-none" @bind-Value="createModel.DateOfBirth" placeholder="Enter DOB" />
+                                <ValidationMessage For="() => createModel.DateOfBirth" />
                             </div>
 
-                            <button type="submit" class="btn hive-modal__submit w-100" disabled="@isSubmitting">
+                            <div class="mb-3">
+                                <InputSelect id="gender" class="form-control border-0 rounded-0 border-bottom fw-semibold shadow-none" @bind-Value="createModel.Gender">
+                                    <option value="">Select Gender</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>                                    
+                                </InputSelect>
+                                <ValidationMessage For="() => createModel.Gender" />
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label for="height">Height:</label>
+                                <span class="fw-semibold">@createModel.Height cm</span>
+                                <input type="range" id="height" min="120" max="220" step="0.1"
+                                       value="@createModel.Height"
+                                       @oninput="OnHeightChanged" />
+                                <div class="ticks">
+                                    @for (int i = 0; i < 11; i++)
+                                    {
+                                        <span></span>
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label for="weight">Weight:</label>
+                                <span id="weight-out" class="fw-semibold">@createModel.Weight kg</span>
+                                <input @value="@createModel.Weight" id="weight" type="range" min="30" max="180" step="0.1" class="form-range" @oninput="OnWeightChanged" />
+                                <div class="ticks">
+                                    @for (int i = 0; i < 11; i++)
+                                    {
+                                        <span></span>
+                                    }
+                                </div>
+                            </div>
+
+                            <button type="submit" class="hive-modal__submit fw-bold rounded px-2 py-2 mt-1 w-100 shadow-none" disabled="@isSubmitting">
                                 @(isSubmitting ? "Creating account…" : "Create Account")
                             </button>
                         </EditForm>
@@ -94,6 +128,12 @@
     <div class="modal-backdrop fade show"></div>
 }
 
+<SuccessPopupModal @bind-IsVisible="showSuccessModal"
+                   Title="Account Created!"
+                   Message="@($"Account ID {createdAccountId} was created successfully.")"
+                   ButtonText="Continue"
+                   OnClose="Close" />
+
 @code {
     [Parameter] public bool IsVisible { get; set; }
     [Parameter] public EventCallback<bool> IsVisibleChanged { get; set; }
@@ -104,25 +144,33 @@
     private enum AuthMode { SignIn, CreateAccount }
     private AuthMode Mode = AuthMode.CreateAccount;
 
-    private readonly SignInModel signInModel = new();
-    private readonly CreateAccountModel createModel = new();
+    private SignInModel signInModel = new();
+    private CreateAccountModel createModel = new();
 
-    private bool isSubmitting;
-    private string? errorMessage;
+    private bool isSubmitting = false;    
+    private EditContext? formContext;
+    private int? createdAccountId;
+    private bool showSuccessModal = false;
+
+    private bool passwordSent = false;
 
     private async Task Close()
     {
         IsVisible = false;
-        errorMessage = null;
+        showSuccessModal = false;
         await IsVisibleChanged.InvokeAsync(false);
     }
 
     private async Task HandleBackdropClick() => await Close();
 
+    protected override void OnInitialized()
+    {
+        formContext = new EditContext(createModel);
+    }
+
     private async Task HandleSignIn()
     {
-        isSubmitting = true;
-        errorMessage = null;
+        isSubmitting = true;        
         try
         {
             // TODO: replace with your real auth service call
@@ -132,29 +180,59 @@
         }
         catch (Exception)
         {
-            errorMessage = "We couldn't sign you in. Check your email and password and try again.";
+
         }
         finally
         {
             isSubmitting = false;
         }
+    }  
+
+    private void OnHeightChanged(ChangeEventArgs e)
+    {
+        if (double.TryParse(e.Value?.ToString(), out var value))
+        {
+            createModel.Height = value;
+        }
+    }
+
+    private void OnWeightChanged(ChangeEventArgs e)
+    {
+        if (double.TryParse(e.Value?.ToString(), out var value))
+        {
+            createModel.Weight = value;
+        }
+    }
+
+    private void HandleEmailInput(ChangeEventArgs e)
+    {
+        createModel.Email = e.Value.ToString();
+        // custom logic here
     }
 
     private async Task HandleCreateAccount()
     {
-        isSubmitting = true;
-        errorMessage = null;
+        isSubmitting = true;        
+        createdAccountId = null;
+
         try
         {
-            // TODO: replace with your real account-creation service call
-            // await AuthService.CreateAccountAsync(createModel.FullName, createModel.Email, createModel.Password);
-            await OnAuthenticated.InvokeAsync();
-            await Close();
+            createdAccountId = await CreateNewUser.CreateAccountAsync(createModel);
+            if (createdAccountId != null)
+            {                
+                IsVisible = false; // Close modal                          
+                createModel = new CreateAccountModel();
+                formContext = new EditContext(createModel); //reset form
+                if (!IsVisible)
+                {
+                    showSuccessModal = true; // success modal
+                }
+            }
         }
-        catch (Exception)
+        catch (InvalidOperationException ex)
         {
-            errorMessage = "We couldn't create your account. Please try again.";
-        }
+            
+        }        
         finally
         {
             isSubmitting = false;
@@ -168,20 +246,5 @@
 
         [Required]
         public string Password { get; set; } = "";
-    }
-
-    private class CreateAccountModel
-    {
-        [Required]
-        public string FullName { get; set; } = "";
-
-        [Required, EmailAddress]
-        public string Email { get; set; } = "";
-
-        [Required, MinLength(6, ErrorMessage = "Password must be at least 6 characters.")]
-        public string Password { get; set; } = "";
-
-        [Required, Compare(nameof(Password), ErrorMessage = "Passwords do not match.")]
-        public string ConfirmPassword { get; set; } = "";
-    }
+    }    
 }
