@@ -55,3 +55,9 @@ public class ToolTabStatus
         OnChange?.Invoke();
     }
 }
+
+public interface IPasswordService
+{
+    Task<bool> SendPasswordAsync(string email);
+    bool VerifyPassword(string email, string enteredCode);
+}

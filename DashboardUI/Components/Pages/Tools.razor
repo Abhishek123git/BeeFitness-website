@@ -15,37 +15,41 @@
     </div>
 </section>
 
-<section class="bg-section rounded-3 w-100 h-auto my-3 p-2">
-    <!-- Nav tabs -->
-    <ul class="nav nav-tabs justify-content-center fw-bold rounded-3 p-2" role="tablist">
-        <li class="nav-item m-2 " role="presentation">
-            <button class="nav-link @(ActiveTabClass(ToolsTab.Calculator))"
-                    id="calculatortab" type="button" role="tab"
-                    aria-controls="tab1" aria-selected="@(TabStatus.ActiveTab == ToolsTab.Calculator)"
-                    @onclick="() => SelectTab(ToolsTab.Calculator)">
-                Calculator
-            </button>
-        </li>
-        <li class="nav-item m-2" role="presentation">
-            <button class="nav-link @(ActiveTabClass(ToolsTab.Standards))"
-                    id="standardstab" type="button" role="tab"
-                    aria-controls="tab2" aria-selected="@(TabStatus.ActiveTab == ToolsTab.Standards)"
-                    @onclick="() => SelectTab(ToolsTab.Standards)">
-                Standards
-            </button>
-        </li>
-        <li class="nav-item m-2" role="presentation">
-            <button class="nav-link @(ActiveTabClass(ToolsTab.Workouts))"
-                    id="workoutstab" type="button" role="tab"
-                    aria-controls="tab3" aria-selected="@(TabStatus.ActiveTab == ToolsTab.Workouts)"
-                    @onclick="() => SelectTab(ToolsTab.Workouts)">
-                Workouts
-            </button>
-        </li>
-    </ul>
+<section class="bg-section rounded-3 w-100 h-auto my-3 p-2">    
+    <div class="row justify-content-center mt-3">
+        <div class="col-12 col-sm-9 col-md-7 col-lg-5">
+            <ul class="nav nav-pills flex-column flex-sm-row justify-content-center align-content-center
+               bg-white rounded-pill py-3 gap-1" role="tablist">
+                <li class="nav-item flex-fill d-flex justify-content-center" role="presentation">
+                    <button class="nav-link rounded-pill fw-bold @(ActiveTabClass(ToolsTab.Calculator))"
+                            id="calculatortab" type="button" role="tab"
+                            aria-controls="tab1" aria-selected="@(TabStatus.ActiveTab == ToolsTab.Calculator)"
+                            @onclick="() => SelectTab(ToolsTab.Calculator)">
+                        Calculator
+                    </button>
+                </li>
+                <li class="nav-item flex-fill d-flex justify-content-center" role="presentation">
+                    <button class="nav-link rounded-pill fw-bold @(ActiveTabClass(ToolsTab.Standards))"
+                            id="standardstab" type="button" role="tab"
+                            aria-controls="tab2" aria-selected="@(TabStatus.ActiveTab == ToolsTab.Standards)"
+                            @onclick="() => SelectTab(ToolsTab.Standards)">
+                        Standards
+                    </button>
+                </li>
+                <li class="nav-item flex-fill d-flex justify-content-center" role="presentation">
+                    <button class="nav-link rounded-pill fw-bold @(ActiveTabClass(ToolsTab.Workouts))"
+                            id="workoutstab" type="button" role="tab"
+                            aria-controls="tab3" aria-selected="@(TabStatus.ActiveTab == ToolsTab.Workouts)"
+                            @onclick="() => SelectTab(ToolsTab.Workouts)">
+                        Workouts
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
 
     <!-- Tab content -->
-    <div class="tab-content p-4 my-2">
+    <div class="tab-content p-4">
         <div class="tab-pane fade @(PaneVisibleClass(ToolsTab.Calculator))"
              id="tab1" role="tabpanel" aria-labelledby="calculatortab">
             @if (TabStatus.ActiveTab == ToolsTab.Calculator)

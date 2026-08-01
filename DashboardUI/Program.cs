@@ -7,9 +7,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+builder.Services.AddScoped(sp =>
+    new CreateNewUser(builder.Configuration.GetConnectionString("DefaultConnection")!));
+
 // Add TabStatus service
 builder.Services.AddScoped<TabStatus>();
 builder.Services.AddScoped<ToolTabStatus>();
+builder.Services.AddMemoryCache();
 
 var app = builder.Build();
 

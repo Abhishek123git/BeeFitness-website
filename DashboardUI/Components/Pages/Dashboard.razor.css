@@ -14,10 +14,10 @@
     padding: 30px 40px 60px;
 }
 
-    .dashboard-page h1, .dashboard-page h3 {
-        font-family: 'Archivo Black', sans-serif;
-        margin: 0;
-    }
+.dashboard-page h1, .dashboard-page h3 {
+    font-family: 'Archivo Black', sans-serif;
+    margin: 0;
+}
 
 .dash-header {
     display: flex;
@@ -107,27 +107,6 @@
 
     .metric-delta.down {
         color: #C0392B;
-    }
-
-/* Tick divider */
-.tick-divider {
-    height: 20px;
-    margin: 26px 0 20px;
-    background-image: repeating-linear-gradient(to right, var(--line) 0, var(--line) 1px, transparent 1px, transparent 12px);
-    position: relative;
-}
-
-    .tick-divider span {
-        position: absolute;
-        top: 0;
-        left: 0;
-        background: var(--paper);
-        padding-right: 10px;
-        font-family: 'IBM Plex Mono', monospace;
-        font-size: 10px;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-        color: var(--muted);
     }
 
 /* Chart grid */

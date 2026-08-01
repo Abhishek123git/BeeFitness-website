@@ -1,0 +1,54 @@
+﻿@if (IsVisible)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow rounded-4">
+                <div class="modal-body p-4 text-center position-relative">
+
+                    <!-- Close (X) button -->
+                    <button type="button" class="btn-close position-absolute top-0 end-0 m-3"
+                            aria-label="Close" @onclick="Close"></button>
+
+                    <!-- Success Icon -->
+                    <div class="d-flex justify-content-center mb-3">
+                        <div class="d-flex align-items-center justify-content-center rounded-circle bg-success bg-opacity-10"
+                             style="width:64px; height:64px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="none"
+                                 viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" class="text-success">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Title -->
+                    <h5 class="fw-semibold mb-2">@Title</h5>
+
+                    <!-- Message -->
+                    <p class="text-muted small mb-4">@Message</p>
+
+                    <!-- Action -->
+                    <button type="button" class="btn btn-success w-100" @onclick="Close">
+                        @ButtonText
+                    </button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public bool IsVisible { get; set; }
+    [Parameter] public EventCallback<bool> IsVisibleChanged { get; set; }
+    [Parameter] public string Title { get; set; } = "Success!";
+    [Parameter] public string Message { get; set; } = "Your action was completed successfully.";
+    [Parameter] public string ButtonText { get; set; } = "OK";
+    [Parameter] public EventCallback OnClose { get; set; }
+
+    private async Task Close()
+    {
+        IsVisible = false;
+        await IsVisibleChanged.InvokeAsync(IsVisible);
+        await OnClose.InvokeAsync();
+    }
+}
