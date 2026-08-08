@@ -11,8 +11,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Blazorise.Bootstrap5" Version="2.2.2" />
+    <PackageReference Include="Blazorise.Icons.FontAwesome" Version="2.2.2" />
     <PackageReference Include="BuildBundlerMinifier2022" Version="2.9.11" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="7.0.2" />
+    <PackageReference Include="Syncfusion.Blazor.CircularGauge" Version="34.1.33" />
+    <PackageReference Include="Syncfusion.Blazor.Themes" Version="34.1.33" />
   </ItemGroup>
 
 </Project>

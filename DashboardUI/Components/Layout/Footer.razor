@@ -1,0 +1,154 @@
+﻿<footer class="site-footer position-relative overflow-hidden">
+    <div class="plate-stripe"></div>
+
+    <!-- Newsletter band -->
+    <div class="footer-top position-relative z-1 p-4">
+        <div class="row justify-content-center text-center">
+            <div class="col-6 d-flex flex-column justify-content-center">
+                <div class="eyebrow mb-1">STAY IN THE GYM LOOP</div>
+                <h2 class="display fs-2">TRAINING TIPS, STRAIGHT TO YOUR INBOX</h2>
+                <p class="fs-6 mt-2">Programming, form breakdowns and early access to drops. No spam, unsubscribe any time.</p>
+            </div>
+
+            <div class="col-6 d-flex flex-column p-4">
+                <EditForm Model="@this" OnValidSubmit="HandleSubscribe"
+                          class="join-forme align-items-start">
+                    <DataAnnotationsValidator />
+
+                    <!-- Input spans full width on mobile, flexes on larger screens -->
+                    <InputText @bind-Value="Email"
+                               class="form-control rounded-2 flex-fill"
+                               placeholder="Enter your email address"
+                               aria-label="Email address" />
+
+                    <!-- Button adjusts to text length -->
+                    <button type="submit"
+                            class="btn text-white border rounded-2 fw-bold text-nowrap my-2 px-4 py-2">
+                        @(IsSubmitting ? "JOINING…" : "JOIN THE CREW")
+                    </button>
+                </EditForm>
+
+                @if (!string.IsNullOrEmpty(StatusMessage))
+                {
+                    <div class="form-status mt-2">@StatusMessage</div>
+                }
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Link columns -->
+    <div class="position-relative z-1 py-4 px-0">        
+        <div class="row">
+            <div class="col-6 col-md-3 d-grid justify-content-center">
+                <h3 class="col-heading mb-3 position-relative d-inline-block fst-italic fw-bold">Shop</h3>
+                <ul class="d-flex flex-column g-3 list-unstyled">
+                    <li><a href="#" class="text-decoration-none text-white-50">Barbells &amp; Plates</a></li>
+                    <li><a href="#" class="text-decoration-none text-white-50">Racks &amp; Rigs</a></li>
+                    <li><a href="#" class="text-decoration-none text-white-50">Apparel</a></li>
+                    <li><a href="#" class="text-decoration-none text-white-50">Supplements</a></li>
+                    <li><a href="#" class="text-decoration-none text-white-50">Sale</a></li>
+                </ul>
+            </div>
+
+            <div class="col-6 col-md-3 d-grid justify-content-center">
+                <h3 class="col-heading mb-3 position-relative d-inline-block fst-italic fw-bold">Support</h3>
+                <ul class="d-flex flex-column g-3 list-unstyled">
+                    <li><a href="#" class="text-decoration-none text-white-50">Help Center</a></li>
+                    <li><a href="#" class="text-decoration-none text-white-50">Track Your Order</a></li>
+                    <li><a href="#" class="text-decoration-none text-white-50">Returns &amp; Exchanges</a></li>
+                    <li><a href="#" class="text-decoration-none text-white-50">Size Guide</a></li>
+                    <li><a href="#" class="text-decoration-none text-white-50">Contact Us</a></li>
+                </ul>
+            </div>
+
+            <div class="col-6 col-md-3 d-grid justify-content-center">
+                <h3 class="col-heading mb-3 position-relative d-inline-block fst-italic fw-bold">Company</h3>
+                <ul class="d-flex flex-column g-3 list-unstyled">
+                    <li><a href="#" class="text-decoration-none text-white-50">About Forge &amp; Iron</a></li>
+                    <li><a href="#" class="text-decoration-none text-white-50">Athlete Program</a></li>
+                    <li><a href="#" class="text-decoration-none text-white-50">Affiliate Program</a></li>
+                    <li><a href="#" class="text-decoration-none text-white-50">Careers</a></li>
+                    <li><a href="#" class="text-decoration-none text-white-50">Press</a></li>
+                </ul>
+            </div>
+
+            <div class="col-6 col-md-3 d-grid justify-content-center">
+                <h3 class="col-heading mb-3 position-relative d-inline-block fst-italic fw-bold">Connect</h3>
+                <div class="social-row mb-4">
+                    @foreach (var s in SocialLinks)
+                    {
+                        <a href="@s.Url" class="social-btn" aria-label="@s.Label">@((MarkupString)s.Icon)</a>
+                    }
+                </div>
+                <div class="contact-block">
+                    <strong>Talk to us</strong>
+                    @PhoneNumber<br />
+                    @SupportEmail
+                </div>
+            </div>
+
+        </div>       
+    </div>
+
+    <!-- Disclaimer -->
+    <div class="disclaimer position-relative z-1 py-3">        
+        <p class="mx-5 px-3">
+            <strong style="color:#8a8780;">Disclaimer —</strong>
+            Content on this site is provided for general fitness and educational purposes only and is not medical advice.
+            Consult a physician before beginning any exercise or nutrition program, particularly if you are pregnant, injured,
+            or managing a medical condition. Forge &amp; Iron is not liable for any injury or loss arising from use of this
+            information.
+        </p>        
+    </div>
+
+    <!-- Bottom bar -->
+    <div class="footer-bottom position-relative z-1 py-3">
+        <div class="row align-items-center mx-5">
+            <div class="col-md-6">
+                <small>&copy; @(FoundedYear)–@(DateTime.Now.Year) Forge &amp; Iron Ltd. Registered in England &amp; Wales, No. 11234567. 44 Anvil Row, Manchester, UK.</small>
+            </div>
+            <div class="col-md-6 text-md-end legal-links">
+                <a href="#">Terms of Use</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Cookie Policy</a>
+                <a href="#">Accessibility</a>
+            </div>
+        </div>        
+    </div>
+
+</footer>
+@code {
+    private bool IsSubmitting { get; set; }
+    private string? StatusMessage { get; set; }
+
+    [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Enter an email address")]
+    [System.ComponentModel.DataAnnotations.EmailAddress(ErrorMessage = "Enter a valid email address")]
+    private string Email { get; set; } = string.Empty;
+
+    private readonly int FoundedYear = 2019;
+    private readonly string PhoneNumber = "+91 7303777431";
+    private readonly string SupportEmail = "support@beefitness.com";
+
+    private record SocialLink(string Label, string Icon, string Url);
+    private readonly List<SocialLink> SocialLinks = new()
+    {
+        new("Instagram", "<i class='bi bi-instagram'></i>", "#"),
+        new("YouTube", "<i class='bi bi-youtube'></i>", "#"),        
+        new("X", "<i class='bi bi-twitter-x'></i>", "#"),
+        new("LinkedIn", "<i class='bi bi-linkedin'></i>", "#"),        
+    };
+
+    private async Task HandleSubscribe()
+    {
+        IsSubmitting = true;
+        StatusMessage = null;
+
+        // TODO: replace with a call to your actual newsletter/email service
+        await Task.Delay(600);
+
+        StatusMessage = $"Thanks — {Email} is on the list.";
+        Email = string.Empty;
+        IsSubmitting = false;
+    }    
+}

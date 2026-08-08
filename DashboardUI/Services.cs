@@ -16,13 +16,62 @@ namespace DashboardUI
         public double Height { get; set; } = 170;
     }
 
+    public class GetFAQDetailModel
+    {
+        public int FaqNo { get; set; } = 0;
+        public string FaqTitle { get; set; } = "";
+        public string? FaqBody { get; set; }        
+    }
+
+    // A tiny wrapper type so DI can distinguish it from any other 'string' registration
+    public class SqlConnectionString
+    {
+        public string Value { get; }
+        public SqlConnectionString(string value) => Value = value;
+    }
+
+    public class FaqRepository
+    {
+        private readonly string _connectionString;
+
+        public FaqRepository(SqlConnectionString connectionString)
+        {
+            _connectionString = connectionString.Value;
+        }
+
+        public async Task<List<GetFAQDetailModel>> GetFaqDataAsync()
+        {
+            var faqList = new List<GetFAQDetailModel>();
+
+            using (var conn = new SqlConnection(_connectionString))
+            using (var cmd = new SqlCommand("dbo.GetFaqData", conn))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                await conn.OpenAsync();
+                using var reader = await cmd.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
+                {
+                    faqList.Add(new GetFAQDetailModel
+                    {
+                        FaqNo = reader.GetInt32(reader.GetOrdinal("DisplayOrder")),
+                        FaqTitle = reader.GetString(reader.GetOrdinal("Question")),
+                        FaqBody = reader.IsDBNull(reader.GetOrdinal("Answer")) ? null : reader.GetString(reader.GetOrdinal("Answer"))
+                    });
+                }
+            }
+
+            return faqList;
+        }
+    }
+
     public class CreateNewUser
     {
         private readonly string _connectionString;
 
-        public CreateNewUser(string connectionString)
+        public CreateNewUser(SqlConnectionString connectionString)
         {
-            _connectionString = connectionString;
+            _connectionString = connectionString.Value;
         }
 
         public async Task<int> CreateAccountAsync(CreateAccountModel model)

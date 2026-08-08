@@ -38,28 +38,17 @@
     }
 </div>
 
-@if (isLoading)
+@if (componentType != null)
 {
-    <div class="hive-calc-panel position-relative mt-4 bg-white border rounded">
-        <span class="spinner-border spinner-border-sm text-primary" role="status" aria-hidden="true"></span>
-        <span class="ms-2">Loading calculator…</span>
+    <div class="hive-calc-panel position-relative mt-4 bg-white border rounded" id="hiveCalcPanel">
+        <DynamicComponent Type="componentType" />
     </div>
 }
-else
-{
-    @if (componentType != null)
-    {
-        <div class="hive-calc-panel position-relative mt-4 bg-white border rounded" id="hiveCalcPanel">
-                <DynamicComponent Type="componentType" />
-            </div>
-    }    
-}   
 
 @code {
     private string ActiveTab = "Calculator";
     private Type? componentType;
-    private string? activeKey;
-    private bool isLoading;   
+    private string? activeKey;   
     
     private string CardClass(Tool tool) =>
     tool.Key == activeKey ? "hive-card d-flex align-items-center gap-3 w-100 h-100 bg-white border rounded p-3 text-start cursor-pointer hive-card--active" : "hive-card d-flex align-items-center gap-3 w-100 h-100 bg-white border rounded p-3 text-start cursor-pointer";
@@ -69,10 +58,8 @@ else
         ["BMI"] = typeof(BMICalculator),
         ["Strength"] = typeof(StrengthCalculator),
         ["BMR"] = typeof(BMRCalculator),
-        ["Protein"] = typeof(ProteinCalculator),
-        // TODO: implement and register these to match CalculatorTools below
-        // ["Bench"] = typeof(BenchPressCalculator),
-        // ["Wilks"] = typeof(WilksCalculator),
+        ["Protein"] = typeof(ProteinCalculator),                
+        ["Fat"] = typeof(FatPercentageCalculator),
     };
 
     private async Task OpenCalculator(string key)
@@ -82,8 +69,7 @@ else
             CloseCalculator();
             return;
         }
-
-        isLoading = true;        
+        
         componentType = null;
         activeKey = key;
         StateHasChanged();
@@ -111,8 +97,7 @@ else
             }            
         }
         finally
-        {
-            isLoading = false;
+        {           
             await InvokeAsync(StateHasChanged);
             if (componentType != null)
             {
@@ -137,5 +122,6 @@ else
         new("Wilks Calculator (Wilks Coefficient)",         "Wilks",    "bi-award-fill",     "/tools/wilks",           "#2FA98C"),
         new("Strength Level Calculator",                    "Strength", "bi-lightning-fill", "/tools/strength-level",  "#2FA98C"),
         new("Protein Calculator",                           "Protein",  "bi-egg-fried",      "/tools/protein",         "#2E86DE"),
+        new("Fat Percentage Calculator",                    "Fat",  "bi bi-percent",      "/tools/fatpercent",  "#f1c40f"),
     };
 }

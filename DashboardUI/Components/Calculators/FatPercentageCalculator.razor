@@ -1,0 +1,432 @@
+﻿@inject FaqRepository FaqRepository
+@inject IJSRuntime JS
+
+
+<section class="row d-flex flex-row card border border-2 rounded-3 overflow-hidden">
+    
+    <div class="col-lg-6 bg-white p-4 p-md-5">
+        <EditForm Model="@model" OnValidSubmit="Calculate">
+            <h4 class="text-black fw-bold">Body Fat Calculator (BFC)</h4>
+            <div class="input-group mb-3">
+                <label id="lblage" class="input-group-text">
+                    <i class="bi bi-calendar-week me-2"></i>Age
+                </label>
+                <input type="number" min="2" max="120" placeholder="Enter your age"
+                       class="form-control rounded-end" aria-describedby="lblage" @bind="model.Age" />
+                <span class="input-group-text text-muted">Yrs</span>
+            </div>
+
+            <div class="input-group mb-3">
+                <label id="lblgender" class="input-group-text"><i class="bi bi-gender-ambiguous me-2"></i>Gender</label>
+                <div class="d-flex align-items-center ps-3">
+                    <InputRadioGroup @bind-Value="model.Gender" Name="gender">
+                        <div class="form-check me-4">
+                            <InputRadio id="genderMale" class="form-check-input" Value="@Gender.Male" />
+                            <label class="form-check-label">Male</label>
+                        </div>
+                        <div class="form-check">
+                            <InputRadio id="genderFemale" class="form-check-input" Value="@Gender.Female" />
+                            <label class="form-check-label">Female</label>
+                        </div>
+                    </InputRadioGroup>
+                </div>
+            </div>
+
+            <div class="input-group mb-3">
+                <label id="lblheight" class="input-group-text"><i class="bi bi-rulers me-2"></i>Height</label>
+                <input type="number" min="0" placeholder="Enter your height" class="form-control w-50" @bind="model.HeightValue" />
+                <select class="form-select" @bind="model.BodyHeightUnit">
+                    <option value="" disabled selected hidden>-- Select unit --</option>
+                    <option value="cm">cm</option>                    
+                    <option value="ft">ft</option>                    
+                </select>
+            </div>
+
+            <div class="input-group mb-3">
+                <label id="lblweight" class="input-group-text">
+                    <i class="bi bi-arrows-expand-vertical me-2"></i>Weight
+                </label>
+                <input type="number" min="0" placeholder="Enter your weight"
+                       class="form-control w-50" @bind="model.WeightValue" aria-describedby="lblweight" />
+                <span class="input-group-text border-start-0 bg-transparent">Kg</span>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-4">
+                    <div class="border rounded p-3 position-relative">
+                        <span class="position-absolute top-0 start-0 translate-middle-y bg-white px-2 fw-semibold text-dark small" id="lblneck">Neck</span>
+                        <div class="d-flex align-items-center">
+                            <input type="number" min="2" max="120" placeholder="Enter your neck size"
+                                    aria-describedby="lblneck" class="fatinput border-0 focus-ring-0 w-100" @bind="model.NeckValue" />
+                            <span>inch</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-4">  
+                    <div class="border rounded p-3 position-relative">
+                        <span class="position-absolute top-0 start-0 translate-middle-y bg-white px-2 fw-semibold text-dark small" id="lblwaist">Waist</span>
+                        <div class="d-flex align-items-center">
+                            <input type="number" min="2" max="120" placeholder="Enter your waist size"
+                                    aria-describedby="lblwaist" class="fatinput border-0 focus-ring-0 w-100 shadow-none" @bind="model.WaistValue" />
+                            <span>inch</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-4">
+                    <div class="border rounded p-3 position-relative @(model.Gender != Gender.Female ? "hip-disabled" : "")">
+                        <span class="position-absolute top-0 start-0 translate-middle-y bg-white px-2 fw-semibold text-dark small" id="lblwaist">Hip</span>
+                        <div class="d-flex align-items-center">
+                            <input type="number" min="2" max="120" placeholder="Enter your hip size"
+                                   aria-describedby="lblwaist" class="fatinput border-0 focus-ring-0 w-100 shadow-none" @bind="model.HipValue" disabled="@(model.Gender != Gender.Female)" />
+                            <span>inch</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-center gap-2 mt-3">
+                <button type="submit" class="btn btn-success px-4">
+                    Calculate <i class="bi bi-send"></i>
+                </button>
+                <button type="reset" class="btn btn-secondary" @onclick="Clear">
+                    Clear <i class="bi bi-x-circle"></i>
+                </button>
+            </div>
+        </EditForm>
+    </div>
+
+    <div class="col-lg-6 gauge-wrapper">
+        @if (HasResult)
+        {
+            <div class="p-3">
+                <p class="fs-5 fw-bold mb-2"> Body Fat: @BfpNavy % </p>
+                Daily calorie needs based on activity level
+
+                @* <table class="calorie-table table table-bordered w-100">
+                    <thead>
+                        <tr class="text-white">
+                            <th class="text-start px-3 py-2">Activity Level</th>
+                            <th class="text-start px-3 py-2">Calorie</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var row in CalorieRows)
+                        {
+                            <tr>
+                                <td class="text-start px-3 py-2">@row.Level</td>
+                                <td class="text-start px-3 py-2">@row.Value.ToString("N0")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table> *@                
+            </div>
+        }
+        else
+        {
+            <div class="result-body-empty">
+                <p>Enter your details and click Calculate to see your results.</p>
+            </div>
+        }
+    </div>    
+</section>
+
+<section class="row d-flex flex-row card border border-2 rounded-3 overflow-hidden p-4 my-3">
+    <div class="col-lg-3 p-4 p-md-5">
+        <h2 class="text-black "> BeeFitness <span class="fst-italic fw-bold">Body Fat Calculator</span></h2>        
+        <img class="img-fluid" src="assets/images/beefitness-body-fat.jpg" />        
+    </div>
+    <div class="col p-4 p-md-5 gap-2">
+        <p>Body fat percentage is the proportion of your total body weight that’s made up of fat. 
+            Unlike BMI, which only looks at height and weight, body fat percentage tells you something about what your weight is actually composed of. 
+            That makes it a more specific and often more useful measure of health and fitness.
+        </p>
+        <p>
+            Here’s why it matters: two people can weigh exactly the same, have the same BMI, and still be in very different health situations.
+            One may carry most of their weight as muscle, the other as fat. 
+            BMI can’t tell the difference. Body fat percentage can.
+        </p>
+        <p>
+            Here’s why it matters: two people can weight exactly the same, have the same BMI, and still be in very different health situations.
+            One may carry most of their weight as muscle, the other as fat.
+            BMI can’t tell the difference. Body fat percentage can.
+        </p>
+        <p>
+            This calculator uses your body measurements (waist, hip, neck circumference) along with your height, weight, and sex to estimate your body fat percentage. 
+            The formulas used include the U.S. Navy method and the YMCA method, both of which are well-validated for general screening.
+        </p>
+        <p>
+            For clinical-grade precision, methods like DEXA scanning, hydrostatic weighing, or air displacement plethysmography (Bod Pod) are available. 
+            But for a practical starting point, this calculator gives you a useful estimate in seconds.
+        </p>
+    </div>
+</section>
+
+<section class="row d-flex flex-row card border border-2 rounded-3 overflow-hidden p-4 my-3">
+    <div class="col-lg-3">       
+        <h2 class="text-black "> What Your Body Fat <span class="fst-italic fw-bold">Percentage Means</span></h2>        
+        <p>Body fat ranges vary by sex.
+            Women naturally carry more body fat than men due to hormonal and reproductive factors, and this is completely normal. 
+            Here’s how to read your result.
+        </p>
+        <img class="img-fluid" src="assets/images/body-percentage-means.jpg" />
+    </div>
+    <div class="col"> 
+        <div class="row gap-2">
+            <div class="col bg-light border rounded-3 p-4">
+                <h5 class="fw-bold">Body Fat Ranges <small class="fw-normal">for Men</small></h5>
+                <ul>
+                    <li><b>Essential fat (2 to 5%):</b> The minimum amount of fat your body needs to function. Dropping below this is dangerous and can lead to organ damage.</li>
+                    <li><b>Athletes (6 to 13%):</b> Typical for competitive athletes and highly trained individuals. Very lean, with visible muscle definition.</li>
+                    <li><b>Fit (14 to 17%):</b> Indicates a healthy, active body composition. Good muscle tone with a moderate amount of fat.</li>
+                    <li><b>Acceptable (18 to 24%):</b> Within the normal range for most adult men. Not a health concern, though there may be room for improvement depending on goals.</li>
+                    <li><b>Obese (25% and higher):</b> Associated with increased health risks including heart disease, insulin resistance, and metabolic syndrome. Worth discussing with your doctor.</li>
+                </ul>
+            </div>
+            <div class="col bg-light border rounded-3 p-4">
+                <h5 class="fw-bold">Body Fat Ranges <small class="fw-normal">for Women</small></h5>
+                <ul>
+                    <li><b>Essential fat (10 to 13%):</b> The minimum needed for normal hormonal and reproductive function. Going below this can cause serious health issues.</li>
+                    <li><b>Athletes (14 to 20%):</b> Common among female athletes and highly active individuals.</li>
+                    <li><b>Fit (21 to 24%):</b>  Indicates a healthy, well-maintained body composition.</li>
+                    <li><b>Acceptable (25 to 31%):</b> Within the normal range for most adult women. Generally, not associated with elevated health risks.</li>
+                    <li><b>Obese (32% and higher):</b> Linked to increased health risks. A medical evaluation and lifestyle adjustments may be beneficial.</li>
+                </ul>
+            </div>
+            <div class="col bg-light border rounded-3 p-4">
+                <h5 class="fw-bold">A Note for Indian Adults</h5>
+                <ul>
+                    <li>Research consistently shows that Indians tend to carry a higher proportion of body fat, especially visceral (abdominal) fat, at lower body weights compared to Western populations. This “thin-fat” phenotype means South Asians may face higher metabolic risk at body fat levels that would be considered acceptable by global standards.</li>
+                    <li>Indians also show higher cardiometabolic risk at BMI levels above 23, not just due to fat distribution but due to underlying metabolic differences. If you’re of South Asian origin, discussing your body fat result with your doctor provides more useful context than the number alone.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="row d-flex flex-row justify-content-center card border border-2 rounded-3 overflow-hidden p-4 my-3">
+    <h2 class="text-black"> Frequently Asked <span class="fst-italic fw-bold">Questions</span></h2>    
+    <div class="row" id="faqAccordion">
+        @foreach (var faq in Faqs)
+        {
+            var faqId = $"faq{faq.FaqNo}";
+            <div class="col-6 gap-2" data-item>
+                <button class="faq-header" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#@faqId" aria-expanded="false" aria-controls="@faqId">
+                    <span class="faq-number d-flex align-items-center justify-content-center flex-shrink-0 rounded-circle border text-muted fw-semibold">@faq.FaqNo</span>
+                    <span class="faq-question">@faq.FaqTitle</span>
+                    <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M7 17L17 7M17 7H7M17 7V17" />
+                    </svg>
+                </button>
+                <div class="collapse" id="@faqId" data-bs-parent="#faqAccordion">
+                    <div class="faq-body">
+                        @faq.FaqBody
+                    </div>
+                </div>
+                <div class="accent-rule"></div>
+            </div>
+        }
+    </div>    
+</section>
+
+<section class="row d-flex flex-row justify-content-center card border border-2 rounded-3 overflow-hidden p-4 my-3">
+    <h2 class="text-black"> Check More <span class="fst-italic fw-bold">Informations</span></h2>    
+    <Accordion>   
+        <div class="row">
+            <div class="col-6">
+                <AccordionItem @bind-Visible="@accordionItem1Visible">
+                    <AccordionHeader>
+                        <Heading Size="HeadingSize.Is5">
+                            <AccordionToggle Class="fw-semibold">Why Excess Body Fat Matters for Your Health ?</AccordionToggle>
+                        </Heading>
+                    </AccordionHeader>
+                    <AccordionBody>
+                        <p class="text-justify">Carrying excess body fat, particularly around the abdomen (visceral fat), raises the risk of several chronic conditions. Visceral fat is especially concerning because it wraps around internal organs and actively releases inflammatory compounds that disrupt metabolic function.</p>
+                        <small class="fw-bold fst-italic">Health risks associated with excess body fat include:</small>
+                        <ul>
+                            <li>Heart disease, including coronary artery disease, heart attack, and stroke</li>
+                            <li>Type 2 diabetes and insulin resistance</li>
+                            <li>High blood pressure (hypertension)</li>
+                            <li>Elevated LDL (“bad”) cholesterol and triglycerides, with lower HDL (“good”) cholesterol</li>
+                            <li>Metabolic syndrome (a cluster of conditions that together increase cardiovascular and diabetes risk)</li>
+                            <li>Non-alcoholic fatty liver disease (NAFLD)</li>
+                            <li>Sleep apnea and other breathing difficulties</li>
+                            <li>Higher rates of clinical depression, anxiety, and reduced quality of life</li>
+                        </ul>
+                    </AccordionBody>
+                </AccordionItem>
+            </div>
+            <div class="col-6">
+                <AccordionItem @bind-Visible="@accordionItem2Visible">
+                    <AccordionHeader>
+                        <Heading Size="HeadingSize.Is5">
+                            <AccordionToggle Class="fw-semibold">Measuring Body Fat Percentage</AccordionToggle>
+                        </Heading>
+                    </AccordionHeader>
+                    <AccordionBody>
+                        <p>U.S. Navy body fat method (Hodgdon & Beckett, 1984):</p>
+                        <small class="fw-bold fst-italic">Measurements needed:</small>
+                        <ul>
+                            <li><span class="fw-semibold">Waist - </span>at navel level (men); at narrowest point (women); stomach relaxed, not sucked in</li>
+                            <li><span class="fw-semibold">Neck - </span>below the larynx, tape sloped slightly downward in front</li>
+                            <li><span class="fw-semibold">Hips - </span>largest point (women only)</li>
+                            <li><span class="fw-semibold">Height - </span>also required for the final calculation, though not detailed above</li>
+                        </ul>                      
+                        <small class="fw-bold fst-italic">Formula structure:</small>
+                        <ul>
+                            <li>Two versions exist: one using inches (USC) and one using centimeters (metric)</li>
+                            <li><span class="fw-semibold">Men's formula</span> uses waist and neck measurements</li>
+                            <li><span class="fw-semibold">Women's formula</span> uses waist, hip, and neck measurements</li>
+                            <li>Both use log₁₀ (base-10 logarithm) of the circumference measurements, combined with a log of height, plugged into an equation that outputs estimated body fat percentage</li>
+                        </ul>
+                        <Button Color="Color.Success" Size="Size.Large" Clicked="@ShowLoading" Loading="@isLoading" Class="text-white fw-bold">
+                            <LoadingTemplate>
+                                Click to download <i class="fa-regular fa-file-pdf"></i> file
+                            </LoadingTemplate>
+                            <ChildContent>
+                                Check more details
+                            </ChildContent>
+                        </Button>
+                    </AccordionBody>
+                </AccordionItem>
+            </div>
+        </div>         
+    </Accordion>   
+</section>
+
+@code {
+    private List<GetFAQDetailModel> Faqs { get; set; } = new();
+    private bool HasResult { get; set; } = true;
+    private double Bmi { get; set; } 
+    private double? BfpNavy { get; set; }
+    private double? BfpBmiMethod { get; set; }
+    private string ErrorMessage { get; set; } = string.Empty;
+
+    public enum Gender { Male, Female }
+    public enum HeightUnit { cm, ft }
+
+    bool accordionItem1Visible = false;
+    bool accordionItem2Visible = false;
+    private bool isLoading = false;
+
+    private const int ChildAgeThreshold = 18;
+
+    private async Task ShowLoading()
+    {
+        isLoading = true;
+        var pdfUrl = "/assets/files/body_fat_formulas.pdf";
+        await JS.InvokeVoidAsync("downloadFile", pdfUrl, "body_fat_formulas.pdf");
+        isLoading = false;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Faqs = await FaqRepository.GetFaqDataAsync();
+    }
+
+    private FatModel model = new()
+    {
+        Gender = Gender.Male,
+        Age = 0,
+        WeightValue = 0,
+        HeightValue = 0,
+        BodyHeightUnit = HeightUnit.cm
+    };
+
+    private void Calculate()
+    {
+        try
+        {
+            var heightMeters = model.HeightInMeters;
+            var weightValue = model.WeightValue;
+            if (heightMeters <= 0 || weightValue <= 0)
+                throw new ArgumentException("Height and weight must be positive values.");
+
+            Bmi = weightValue / Math.Pow(heightMeters, 2);                    
+
+            BfpBmiMethod = CalculateBfpFromBmi(Bmi, model.Age, model.Gender);
+            BfpNavy = TryCalculateBfpNavy(model);
+
+            HasResult = true;
+            ErrorMessage = string.Empty;
+        }
+        catch (Exception ex)
+        {
+            Clear();
+            ErrorMessage = $"Error: {ex.Message}";
+        }
+    }
+   
+    private double CalculateBfpFromBmi(double bmi, int age, Gender gender)
+    {
+        bool isChild = age < ChildAgeThreshold;
+
+        return (isChild, gender) switch
+        {
+            (true, Gender.Male) => 1.51 * bmi - 0.70 * age - 2.2,
+            (true, Gender.Female) => 1.51 * bmi - 0.70 * age + 1.4,
+            (false, Gender.Male) => 1.20 * bmi + 0.23 * age - 16.2,
+            (false, Gender.Female) => 1.20 * bmi + 0.23 * age - 5.4,
+            _ => throw new ArgumentException("Unsupported gender.")
+        };
+    }
+   
+    private double? TryCalculateBfpNavy(FatModel m)
+    {
+        var heightCm = m.HeightInCm;
+
+        if (m.Gender == Gender.Male)
+        {
+            var diff = m.WaistValue - m.NeckValue;
+            if (diff <= 0 || heightCm <= 0) return null;
+
+            return 495.0 / (1.0324 - 0.19077 * Math.Log10(diff) + 0.15456 * Math.Log10(heightCm)) - 450.0;
+        }
+        else
+        {
+            var sum = m.WaistValue + m.HipValue - m.NeckValue;
+            if (sum <= 0 || heightCm <= 0) return null;
+
+            return 495.0 / (1.29579 - 0.35004 * Math.Log10(sum) + 0.22100 * Math.Log10(heightCm)) - 450.0;
+        }
+    }
+
+    private void Clear()
+    {
+        Bmi = 0;            
+        BfpNavy = null;
+        BfpBmiMethod = null;
+        HasResult = false;
+    }
+
+    public class FatModel
+    {
+        public Gender Gender { get; set; } = Gender.Male;
+        public int Age { get; set; } = 2;
+        public HeightUnit BodyHeightUnit { get; set; } = HeightUnit.cm;
+        public double HeightValue { get; set; } = 0.0;
+        public double WeightValue { get; set; } = 0.0;
+        public double NeckValue { get; set; } = 0.0;
+        public double WaistValue { get; set; } = 0.0;
+        public double HipValue { get; set; } = 0.0;
+
+        public double HeightInMeters =>
+            BodyHeightUnit switch
+            {
+                HeightUnit.cm => HeightValue / 100.0,
+                HeightUnit.ft => HeightValue * 0.3048,
+                _ => throw new ArgumentException($"Unsupported height unit: {BodyHeightUnit}")
+            };
+
+        // Navy formula needs height specifically in cm, regardless of input unit.
+        public double HeightInCm =>
+            BodyHeightUnit switch
+            {
+                HeightUnit.cm => HeightValue,
+                HeightUnit.ft => HeightValue * 30.48,
+                _ => throw new ArgumentException($"Unsupported height unit: {BodyHeightUnit}")
+            };
+    }
+}
