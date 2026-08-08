@@ -1,14 +1,28 @@
+using Syncfusion.Blazor;
 using DashboardUI;
 using DashboardUI.Components;
+using Blazorise;
+using Blazorise.Bootstrap5;
+using Blazorise.Icons.FontAwesome;
 
 var builder = WebApplication.CreateBuilder(args);
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddScoped(sp =>
-    new CreateNewUser(builder.Configuration.GetConnectionString("DefaultConnection")!));
+builder.Services.AddBlazorise(options =>{options.Immediate = true;}).AddBootstrap5Providers().AddFontAwesomeIcons();
+
+builder.Services.AddSingleton(new SqlConnectionString(connectionString)); // simple wrapper, see below
+
+builder.Services.AddScoped<CreateNewUser>();
+builder.Services.AddScoped<FaqRepository>();
+
+builder.Services.AddSyncfusionBlazor();
+builder.Services.AddServerSideBlazor()
+    .AddCircuitOptions(o => o.DetailedErrors = true);
 
 // Add TabStatus service
 builder.Services.AddScoped<TabStatus>();
